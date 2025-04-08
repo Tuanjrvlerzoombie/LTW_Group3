@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FLIC - DUE | Activity</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="logo">
+          <div class="logo-square"></div>
+          <div class="logo-text">FLIC - DUE</div>
+        </div>
+        <nav class="nav-menu">
+          <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+          </a>
+          <a href="templates.html" class="nav-item">
+            <i class="fas fa-layer-group"></i>
+            <span>Templates</span>
+          </a>
+          <a href="add-article.html" class="nav-item">
+            <i class="fas fa-file-alt"></i>
+            <span>Add Article</span>
+          </a>
+          <a href="activity.html" class="nav-item active">
+            <i class="fas fa-users-cog"></i>
+            <span>Management</span>
+          </a>
+          <a href="profile.html" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+          </a>
+        </nav>
+        <div class="user-info">
+          <div class="user-avatar">A</div>
+          <div class="user-name">admin (admin)</div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="header">
+          <h1>Activity</h1>
+          <div class="header-actions">
+            <a href="account.html" class="btn btn-success"
+              >Account Management</a
+            >
+            <div class="select-wrapper">
+              <select>
+                <option>All Roles</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>User name</th>
+                <th>Role</th>
+                <th>Action</th>
+                <th>Status</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>
+                  <div class="user-avatar-small"></div>
+                  Kianna Kenter
+                </td>
+                <td>Admin</td>
+                <td>
+                  <div>Publish</div>
+                  <div class="small-text">
+                    Published: How 150 Meetings by Amit Shah and 3,200
+                    Suggestions...
+                  </div>
+                </td>
+                <td>
+                  <span class="status online"
+                    ><i class="fas fa-circle"></i> Online</span
+                  >
+                </td>
+                <td>12-Jan-2024 | 08:53 am</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>
+                  <div class="user-avatar-small"></div>
+                  Phillip Ekstrom
+                </td>
+                <td>Editor</td>
+                <td>
+                  <div>Delete</div>
+                  <div class="small-text">
+                    Deleted: Covid-19 LIVE: 2,669 Active Cases in India; 21
+                    People...
+                  </div>
+                </td>
+                <td>
+                  <span class="status offline"
+                    ><i class="fas fa-circle"></i> Offline</span
+                  >
+                </td>
+                <td>14-Jan-2024 | 08:30 am</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>
+                  <div class="user-avatar-small"></div>
+                  Corey Bator
+                </td>
+                <td>Viewer</td>
+                <td>
+                  <div>Modify</div>
+                  <div class="small-text">
+                    Modified: How 150 Meetings by Amit Shah and 3,200
+                    Suggestions...
+                  </div>
+                </td>
+                <td>
+                  <span class="status online"
+                    ><i class="fas fa-circle"></i> Online</span
+                  >
+                </td>
+                <td>12-Jan-2024 | 08:53 am</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>
+                  <div class="user-avatar-small"></div>
+                  Omar Donin
+                </td>
+                <td>Viewer</td>
+                <td>
+                  <div>Publish</div>
+                  <div class="small-text">
+                    Published: How 150 Meetings by Amit Shah and 3,200
+                    Suggestions...
+                  </div>
+                </td>
+                <td>
+                  <span class="status offline"
+                    ><i class="fas fa-circle"></i> Offline</span
+                  >
+                </td>
+                <td>14-Jan-2024 | 08:30 am</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>
+                  <div class="user-avatar-small"></div>
+                  Jocelyn Rosser
+                </td>
+                <td>Admin</td>
+                <td>
+                  <div>Delete</div>
+                  <div class="small-text">
+                    Deleted: How 150 Meetings by Amit Shah and 3,200
+                    Suggestions...
+                  </div>
+                </td>
+                <td>
+                  <span class="status online"
+                    ><i class="fas fa-circle"></i> Online</span
+                  >
+                </td>
+                <td>12-Jan-2024 | 08:53 am</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
