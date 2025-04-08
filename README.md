@@ -1,5 +1,5 @@
 # LTW_Group3
-# Web App Quản Lý Nội Dung CMS cho Trung Tâm Tin Học và Ngoại Ngữ Flic
+# Hệ Thống Quản Lý Nội Dung (CMS) cho Trung Tâm Tin Học và Ngoại Ngữ Flic
 
 ## Mô Tả Dự Án
 
@@ -30,9 +30,3 @@ Dự án **Web App Quản Lý Nội Dung CMS (Content Management System)** dành
 5. **Thay Đổi Template Giao Diện**:
    - Cho phép thay đổi giao diện của hệ thống qua việc lựa chọn hoặc chỉnh sửa các template có sẵn.
    - Quản trị viên có thể dễ dàng thay đổi màu sắc, kiểu chữ và bố cục của trang web để phù hợp với yêu cầu của trung tâm.
-
-## Cài Đặt
-
-1. **Clone Repository**:
-   ```bash
-   git clone https://github.com/username/flic-cms.git
