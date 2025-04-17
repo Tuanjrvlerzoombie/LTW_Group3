@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FLIC - DUE | Account</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="logo">
+          <div class="logo-square"></div>
+          <div class="logo-text">FLIC - DUE</div>
+        </div>
+        <nav class="nav-menu">
+          <a href="home.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Article</span>
+          </a>
+
+          <a href="add-article.html" class="nav-item">
+            <i class="fas fa-file-alt"></i>
+            <span>Add Article</span>
+          </a>
+          <a href="activity.html" class="nav-item">
+            <i class="fas fa-users-cog"></i>
+            <span>Management</span>
+          </a>
+          <a href="profile.html" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+          </a>
+        </nav>
+        <div class="user-info">
+          <a href="public-home.html" class="logout-btn">
+            <div class="user-avatar">A</div>
+            <div class="user-name">Logout</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="header">
+          <h1>Account</h1>
+          <div class="header-actions">
+            <a
+              href="activity.html"
+              class="btn btn-success"
+              id="activityManagementBtn"
+            >
+              Activity Management</a
+            >
+
+            <button class="btn btn-primary" id="newAccountBtn">
+              <i class="fas fa-plus"></i>
+              New Account
+            </button>
+            <div class="select-wrapper">
+              <select>
+                <option>All Roles</option>
+                <option>Admin</option>
+                <option>Editor</option>
+                <option>Viewer</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Role</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Kianna Kenter</td>
+                <td>Admin</td>
+                <td>kianna998855@gmail.com</td>
+                <td>9192052652</td>
+                <td class="ac_icon">
+                  <button class="btn-icon btn-view view-account-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn-icon btn-delete delete-account-btn">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Phillip Ekstrom</td>
+                <td>Editor</td>
+                <td>phillip.ekstorm@uttarpradeshtimes.com</td>
+                <td>9190529582</td>
+                <td class="ac_icon">
+                  <button class="btn-icon btn-view view-account-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn-icon btn-delete delete-account-btn">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Corey Bator</td>
+                <td>Viewer</td>
+                <td>corey.bator@uttarpradeshtimes.com</td>
+                <td>9198185980</td>
+                <td class="ac_icon">
+                  <button class="btn-icon btn-view view-account-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn-icon btn-delete delete-account-btn">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Omar Donin</td>
+                <td>Viewer</td>
+                <td>omar.donin@uttarpradeshtimes.com</td>
+                <td>8010385856</td>
+                <td class="ac_icon">
+                  <button class="btn-icon btn-view view-account-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn-icon btn-delete delete-account-btn">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Jocelyn Rosser</td>
+                <td>Admin</td>
+                <td>jocelyn.rosser@uttarpradeshtimes.com</td>
+                <td>9182798287</td>
+                <td class="ac_icon">
+                  <button class="btn-icon btn-view view-account-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn-icon btn-delete delete-account-btn">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Madelyn Gouse</td>
+                <td>Editor</td>
+                <td>madelyn.gouse@uttarpradeshtimes.com</td>
+                <td>9873555800</td>
+                <td class="ac_icon">
+                  <button class="btn-icon btn-view view-account-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn-icon btn-delete delete-account-btn">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>Jaxson Carder</td>
+                <td>Viewer</td>
+                <td>jaxson.carder@uttarpradeshtimes.com</td>
+                <td>8585983311</td>
+                <td class="ac_icon">
+                  <button class="btn-icon btn-view view-account-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn-icon btn-delete delete-account-btn">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>Giana Stanton</td>
+                <td>Viewer</td>
+                <td>giana.stanton@uttarpradeshtimes.com</td>
+                <td>9187001616</td>
+                <td class="ac_icon">
+                  <button class="btn-icon btn-view view-account-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn-icon btn-delete delete-account-btn">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- View/Edit Account Modal -->
+    <div class="modal" id="accountModal">
+      <div class="modal-content account-modal">
+        <div class="modal-header">
+          <h2>Account</h2>
+          <button class="close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="account-form">
+            <div class="form-row">
+              <div class="form-group half">
+                <label>Username</label>
+                <input type="text" value="Kianna Kenter" />
+              </div>
+              <div class="form-group half">
+                <label>Email</label>
+                <input type="email" value="kianna998855@gmail.com" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group half">
+                <label>Role</label>
+                <div class="select-wrapper">
+                  <select>
+                    <option selected>Admin</option>
+                    <option>Editor</option>
+                    <option>Viewer</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group half">
+                <label>Password</label>
+                <input type="password" value="9192052652" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Summary</label>
+              <input type="textarea" value="Summary of this user" />
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-secondary">Cancel</button>
+              <button class="btn btn-primary">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div class="modal" id="deleteAccountModal">
+      <div class="modal-content delete-modal">
+        <div class="modal-header">
+          <h2>Delete Account</h2>
+          <button class="close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <p>Do you want delete account?</p>
+          <div class="modal-actions">
+            <button class="btn btn-primary">Yes</button>
+            <button class="btn btn-secondary">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FLIC - DUE | Login</title>
+    <link rel="stylesheet" href="public-style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body class="login-page">
+    <div class="login-container">
+      <div class="login-form-container">
+        <div class="login-logo">
+          <img src="/img/logo.png" alt="FLIC-DUE Logo" class="logo-image" />
+          <h1>FLIC - DUE</h1>
+        </div>
+
+        <h2>Login</h2>
+
+        <form class="login-form" action="home.html" method="GET">
+          <div class="form-group">
+            <label for="username">User Name</label>
+            <input
+              type="text"
+              id="username"
+              placeholder="hannah.green@test.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Password123@" />
+          </div>
+
+          <div class="form-group">
+            <label for="captcha">Security Text</label>
+            <div class="captcha-container">
+              <input
+                type="text"
+                id="captcha"
+                placeholder="Enter the shown text"
+              />
+              <div class="captcha-image">
+                <img
+                  src="https://via.placeholder.com/150x50?text=mkfxc"
+                  alt="CAPTCHA"
+                />
+                <button type="button" class="refresh-captcha">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="remember" checked />
+            <label for="remember">Remember me on this computer</label>
+          </div>
+
+          <button type="submit" class="login-button">Log in</button>
+        </form>
+      </div>
+
+      <div class="login-illustration">
+        <img
+          src="https://via.placeholder.com/1000x200"
+          alt="City Skyline Illustration"
+        />
+      </div>
+    </div>
+  </body>
+</html>
