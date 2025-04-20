@@ -191,3 +191,62 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+// Add this to your existing script.js file
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Make all article rows and cards clickable to show the article detail modal
+  const articleRows = document.querySelectorAll(".article-row");
+  const articleCards = document.querySelectorAll(".article-card");
+  const articleDetailModal = document.getElementById("articleDetailModal");
+
+  // For table view
+  if (articleRows) {
+    articleRows.forEach((row) => {
+      row.addEventListener("click", function () {
+        if (articleDetailModal) {
+          articleDetailModal.classList.add("show");
+        }
+      });
+    });
+  }
+
+  // For grid view
+  if (articleCards) {
+    articleCards.forEach((card) => {
+      card.addEventListener("click", function () {
+        if (articleDetailModal) {
+          articleDetailModal.classList.add("show");
+        }
+      });
+    });
+  }
+
+  // Public home page article links
+  const publicArticleCards = document.querySelectorAll(
+    ".article-card, .featured-article"
+  );
+
+  if (publicArticleCards) {
+    publicArticleCards.forEach((card) => {
+      card.addEventListener("click", function () {
+        window.location.href = "public-article-detail.html";
+      });
+    });
+  }
+
+  // Back button functionality
+  const backButtons = document.querySelectorAll(".back-button, .back-link a");
+
+  if (backButtons) {
+    backButtons.forEach((button) => {
+      button.addEventListener("click", function (e) {
+        // For modal back buttons
+        if (articleDetailModal && this.closest(".modal")) {
+          e.preventDefault();
+          articleDetailModal.classList.remove("show");
+        }
+        // For page back buttons, let the default behavior work (navigate back)
+      });
+    });
+  }
+});
