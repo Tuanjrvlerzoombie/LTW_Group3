@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}FLIC - DUE{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'cms_api/css/public_style.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="public-container">
+        <!-- Header -->
+        <header class="public-header">
+            <div class="logo-container">
+                <img src="{% static 'cms_api/img/logo.png' %}" alt="DUE Logo" class="logo-image" />
+                <span class="logo-text">DUE</span>
+            </div>
+            <div class="header-actions">
+                <div class="search-container">
+                    <input type="text" placeholder="Search by Text, Time or Category" />
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <a href="{% url 'login' %}" class="login-btn">
+                    <i class="fas fa-user"></i>
+                    Login
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="public-main">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="public-footer">
+            <p>&copy; {% now "Y" %} FLIC - DUE. All rights reserved.</p>
+        </footer>
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

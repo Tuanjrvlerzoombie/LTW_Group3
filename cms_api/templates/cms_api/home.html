@@ -1,0 +1,256 @@
+{% extends 'cms_api/base.html' %}
+{% load static %}
+
+{% block title %}Trang chủ - FLIC - DUE{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Home</h1>
+    <div class="header-actions">
+        <button class="btn btn-success" id="changeViewBtn">
+            Change View
+        </button>
+        <div class="search-container">
+            <input type="text" placeholder="Search by text, time or tags" id="searchInput" />
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="filters">
+    <div class="filter-group">
+        <label>Date</label>
+        <div class="select-wrapper">
+            <select>
+                <option>All Dates</option>
+            </select>
+        </div>
+    </div>
+    <div class="filter-group">
+        <label>Category</label>
+        <div class="select-wrapper">
+            <select>
+                <option>All Types</option>
+                <option>Event</option>
+                <option>Knowledge</option>
+                <option>Course</option>
+            </select>
+        </div>
+    </div>
+    <div class="filter-group">
+        <label>Status</label>
+        <div class="select-wrapper">
+            <select>
+                <option>All Status</option>
+                <option>Published</option>
+                <option>Pending</option>
+                <option>Planned</option>
+                <option>Rejected</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn btn-primary getdata">Get Data</button>
+</div>
+
+<div class="stats">
+    <div class="stat-card green">
+        <div class="stat-number">{{ post_stats.published }}</div>
+        <div class="stat-label">Published</div>
+        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+    </div>
+    <div class="stat-card orange">
+        <div class="stat-number">{{ post_stats.pending }}</div>
+        <div class="stat-label">Pending</div>
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+    </div>
+    <div class="stat-card blue">
+        <div class="stat-number">{{ post_stats.planned }}</div>
+        <div class="stat-label">Planned</div>
+        <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
+    </div>
+    <div class="stat-card red">
+        <div class="stat-number">{{ post_stats.reject }}</div>
+        <div class="stat-label">Rejected</div>
+        <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+    </div>
+</div>
+
+<!-- Table View (Default) -->
+<div class="table-container" id="tableView" style="display: {% if active_view == 'table' %}block{% else %}none{% endif %};">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Author</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in posts %}
+            <tr class="article-row" data-id="{{ post.id }}">
+                <td>{{ post.id }}</td>
+                <td>
+                    <div class="user-avatar-small"></div>
+                    {{ post.author.username }}
+                </td>
+                <td>
+                    {{ post.title }}
+                    <div class="small-text">
+                        Created: {{ post.created_at|date:"d-m-Y" }} | {{ post.created_at|time:"G:i" }}
+                    </div>
+                </td>
+                <td>{{ post.categories_name }}</td>
+                <td>
+                    <span class="status
+                        {% if post.status == 'published' %}published
+                        {% elif post.status == 'pending' %}pending
+                        {% elif post.status == 'draft' %}pending
+                        {% elif post.status == 'planned' %}planned
+                        {% elif post.status == 'reject' %}unpublished
+                        {% endif %}">
+                        {% if post.status == 'published' %}Published
+                        {% elif post.status == 'pending' %}Pending
+                        {% elif post.status == 'draft' %}Pending
+                        {% elif post.status == 'planned' %}Planned
+                        {% elif post.status == 'reject' %}Rejected
+                        {% endif %}
+                    </span>
+                </td>
+                <td>{{ post.created_at|date:"d-m-Y" }} | {{ post.created_at|time:"G:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No articles found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Grid View (Hidden by default) -->
+<div class="grid-view" id="gridView" style="display: {% if active_view == 'grid' %}block{% else %}none{% endif %};">
+    <div class="article-grid">
+        {% for post in posts %}
+        <div class="article-card" data-id="{{ post.id }}">
+            <div class="article-image">
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                {% else %}
+                <i class="fas fa-image"></i>
+                {% endif %}
+            </div>
+            <div class="article-content">
+                <h3>{{ post.title }}</h3>
+                <div class="article-meta">{{ post.created_at|date:"d-m-Y" }} {{ post.created_at|time:"G:i" }}</div>
+                <div class="article-tag {{ post.categories_name|lower }}">{{ post.categories_name }}</div>
+                <div class="status-badge
+                    {% if post.status == 'published' %}published
+                    {% elif post.status == 'pending' %}pending
+                    {% elif post.status == 'draft' %}pending
+                    {% elif post.status == 'planned' %}planned
+                    {% elif post.status == 'reject' %}unpublished
+                    {% endif %}">
+                    {% if post.status == 'published' %}Published
+                    {% elif post.status == 'pending' %}Pending
+                    {% elif post.status == 'draft' %}Pending
+                    {% elif post.status == 'planned' %}Planned
+                    {% elif post.status == 'reject' %}Rejected
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-message">Không tìm thấy bài viết nào.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<!-- Search Modal -->
+<div class="modal" id="searchModal">
+    <div class="modal-content search-modal">
+        <div class="modal-header">
+            <h2>Search</h2>
+            <button class="close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="search-form">
+                <div class="form-group">
+                    <label>Keywords</label>
+                    <input type="text" placeholder="Enter search keywords" />
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <div class="select-wrapper">
+                        <select>
+                            <option>Event</option>
+                            <option>Knowledge</option>
+                            <option>Course</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Start Date</label>
+                        <input type="date" placeholder="Select date" />
+                    </div>
+                    <div class="form-group half">
+                        <label>End Date</label>
+                        <input type="date" placeholder="Select date" />
+                    </div>
+                </div>
+                <button class="btn btn-primary search-submit">Search</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Thiết lập trình nghe sự kiện cho nút thay đổi chế độ xem
+    const changeViewBtn = document.getElementById("changeViewBtn");
+    const tableView = document.getElementById("tableView");
+    const gridView = document.getElementById("gridView");
+
+    if (changeViewBtn && tableView && gridView) {
+        changeViewBtn.addEventListener("click", () => {
+            if (tableView.style.display === "none") {
+                tableView.style.display = "block";
+                gridView.style.display = "none";
+                changeViewBtn.classList.remove("active");
+            } else {
+                tableView.style.display = "none";
+                gridView.style.display = "block";
+                changeViewBtn.classList.add("active");
+            }
+        });
+    }
+
+    // Thêm sự kiện click cho các hàng bài viết trong chế độ xem bảng
+    const articleRows = document.querySelectorAll(".article-row");
+    articleRows.forEach((row) => {
+        row.addEventListener("click", function () {
+            const articleId = this.getAttribute("data-id");
+            window.location.href = `/admin-dashboard/article/${articleId}/`;
+        });
+    });
+
+    // Thêm sự kiện click cho các thẻ bài viết trong chế độ xem lưới
+    const articleCards = document.querySelectorAll(".article-card");
+    articleCards.forEach((card) => {
+        card.addEventListener("click", function () {
+            const articleId = this.getAttribute("data-id");
+            window.location.href = `/admin-dashboard/article/${articleId}/`;
+        });
+    });
+});
+</script>
+{% endblock %}

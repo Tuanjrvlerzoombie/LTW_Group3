@@ -1,0 +1,153 @@
+{% extends 'cms_api/base.html' %}
+{% load static %}
+
+{% block title %}Profile - FLIC - DUE{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>User Profile</h1>
+</div>
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-avatar">{{ user.username|first|upper }}</div>
+        <div class="profile-name">{{ user.username }}</div>
+        <div class="profile-role">{{ user.role|title }}</div>
+
+        <div class="profile-stats">
+            <div class="stat">
+                <div class="stat-number">{{ user_articles.count }}</div>
+                <div class="stat-label">Articles</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">{{ user_articles.published.count|default:"0" }}</div>
+                <div class="stat-label">Published</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">{{ user_articles.pending.count|default:"0" }}</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+
+        <div class="profile-info">
+            <h3>Personal Information</h3>
+            <div class="info-row">
+                <div class="info-label">Email</div>
+                <div class="info-value">{{ user.email }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Phone</div>
+                <div class="info-value">{{ user.phone_number|default:"Not provided" }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Location</div>
+                <div class="info-value">{{ user.location|default:"Not provided" }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Summary</div>
+                <div class="info-value">{{ user.profile_summary|default:"Not provided" }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Joined</div>
+                <div class="info-value">{{ user.date_joined|date:"d M Y" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-content">
+        <div class="profile-tabs">
+            <button class="tab-btn active" data-tab="account">Account Settings</button>
+            <button class="tab-btn" data-tab="password">Change Password</button>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="tab-content" id="account-tab">
+            <p class="tab-description">Manage your account settings</p>
+
+            <form class="settings-form" method="post" action="{% url 'update_profile' %}">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="account">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" name="phone_number" value="{{ user.phone_number|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" value="{{ user.location|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="profile_summary">Profile Summary</label>
+                    <textarea id="profile_summary" name="profile_summary" rows="3">{{ user.profile_summary|default:'' }}</textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+
+        <div class="tab-content" id="password-tab" style="display: none;">
+            <p class="tab-description">Change your password</p>
+
+            <form class="settings-form" method="post" action="{% url 'update_profile' %}">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="password">
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
+                    <input type="password" id="current_password" name="current_password" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="new_password">New Password</label>
+                        <input type="password" id="new_password" name="new_password" required>
+                    </div>
+                    <div class="form-group half">
+                        <label for="confirm_password">Confirm New Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Change Password</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+
+            // Add active class to clicked button
+            this.classList.add('active');
+
+            // Hide all tab contents
+            tabContents.forEach(content => content.style.display = 'none');
+
+            // Show the selected tab content
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(`${tabId}-tab`).style.display = 'block';
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}
