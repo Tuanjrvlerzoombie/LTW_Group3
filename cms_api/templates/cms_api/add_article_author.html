@@ -1,0 +1,95 @@
+{% extends 'cms_api/base.html' %}
+{% load static %}
+
+{% block title %}Add Article - FLIC - DUE{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Add Article</h1>
+    <div class="header-actions">
+        <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" form="articleForm" class="btn btn-primary">Submit</button>
+    </div>
+</div>
+
+<div class="add-article-container">
+    <form id="articleForm" method="post" enctype="multipart/form-data" class="article-form">
+        {% csrf_token %}
+        
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label for="id_title">Title</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+            <div class="error">{{ form.title.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_content">Content</label>
+            {{ form.content }}
+            {% if form.content.errors %}
+            <div class="error">{{ form.content.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half">
+                <label for="id_categories_name">Category</label>
+                <div class="select-wrapper">
+                    {{ form.categories_name }}
+                </div>
+                {% if form.categories_name.errors %}
+                <div class="error">{{ form.categories_name.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group half">
+                <label for="id_tag">Tags</label>
+                <div class="tag-input-container">
+                    {{ form.tag }}
+                </div>
+                {% if form.tag.errors %}
+                <div class="error">{{ form.tag.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="id_image">Images</label>
+            <p class="form-hint">Add images to your article</p>
+            {{ form.image }}
+            {% if form.image.errors %}
+            <div class="error">{{ form.image.errors }}</div>
+            {% endif %}
+
+            <label for="id_file">Files</label>
+            <p class="form-hint">Add files to your article</p>
+            {{ form.file }}
+            {% if form.file.errors %}
+            <div class="error">{{ form.file.errors }}</div>
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Xử lý khi form được submit
+    const form = document.getElementById('articleForm');
+    form.addEventListener('submit', function(e) {
+        // Có thể thêm validation ở đây nếu cần
+    });
+});
+</script>
+{% endblock %}
