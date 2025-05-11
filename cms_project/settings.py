@@ -1,4 +1,3 @@
-# Thêm cấu hình này vào settings.py
 import os
 from pathlib import Path
 
@@ -22,6 +21,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'cms_api',  # Thêm ứng dụng cms_api
+    'ckeditor',  # Thêm CKEditor
+    'ckeditor_uploader',  # Thêm CKEditor Uploader
 ]
 
 MIDDLEWARE = [
@@ -87,13 +88,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    # BASE_DIR / 'static',
+    BASE_DIR / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# CKEditor Configuration
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 400,
+        'width': '100%',
+    },
+}
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
