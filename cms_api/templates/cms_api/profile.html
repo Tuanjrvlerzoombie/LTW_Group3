@@ -4,13 +4,70 @@
 {% block title %}Profile - FLIC - DUE{% endblock %}
 
 {% block content %}
+<style>
+    body {
+    background-image: url('https://i.pinimg.com/736x/5a/ab/fe/5aabfed022882ad4a78e47a377d9c984.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+.avatar-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.upload-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+.upload-icon:hover {
+    background-color: #0056b3;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    background-color: #ccc;
+    font-size: 36px;
+    color: white;
+    text-align: center;
+    line-height: 100px;
+}
+</style>
+
 <div class="header">
     <h1>User Profile</h1>
 </div>
 
 <div class="profile-container">
     <div class="profile-card">
-        <div class="profile-avatar">{{ user.username|first|upper }}</div>
+        <div class="avatar-wrapper">
+            {% if user.avatar %}
+                <img class="profile-avatar" id="avatarPreview" src="{{ user.avatar.url }}" alt="Avatar">
+            {% else %}
+                <div class="profile-avatar" id="avatarPreview">{{ user.username|first|upper }}</div>
+            {% endif %}
+            <label for="avatarInput" class="upload-icon">+</label>
+            <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;" form="accountForm">
+        </div>
+
         <div class="profile-name">{{ user.username }}</div>
         <div class="profile-role">{{ user.role|title }}</div>
 
@@ -73,9 +130,12 @@
         <div class="tab-content" id="account-tab">
             <p class="tab-description">Manage your account settings</p>
 
-            <form class="settings-form" method="post" action="{% url 'update_profile' %}">
+            <form class="settings-form" method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data" id="accountForm">
                 {% csrf_token %}
                 <input type="hidden" name="form_type" value="account">
+
+                <!-- Avatar input is placed above in avatar-wrapper -->
+
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input type="email" id="email" name="email" value="{{ user.email }}" required>
@@ -133,19 +193,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     tabButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Remove active class from all buttons
             tabButtons.forEach(btn => btn.classList.remove('active'));
-
-            // Add active class to clicked button
             this.classList.add('active');
-
-            // Hide all tab contents
             tabContents.forEach(content => content.style.display = 'none');
-
-            // Show the selected tab content
             const tabId = this.getAttribute('data-tab');
             document.getElementById(`${tabId}-tab`).style.display = 'block';
         });
+    });
+
+    // Avatar preview on file select
+    const input = document.getElementById("avatarInput");
+    const preview = document.getElementById("avatarPreview");
+
+    input.addEventListener("change", function() {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (preview.tagName.toLowerCase() === 'img') {
+                    preview.src = e.target.result;
+                } else {
+                    preview.style.backgroundImage = `url(${e.target.result})`;
+                    preview.textContent = '';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
     });
 });
 </script>

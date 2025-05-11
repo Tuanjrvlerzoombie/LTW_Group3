@@ -4,31 +4,26 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, update_session_auth_hash
 from django.http import HttpResponse
-from django.contrib.auth.forms import PasswordChangeForm
+from django.conf import settings
+
 from .models import Post, User
 from .forms import AuthorArticleForm
-import random
-import string
+
 import os
-from django.conf import settings
 
 
 # Authentication views
 def login_view(request):
-    """View for user login"""
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         remember = request.POST.get('remember')
 
         user = authenticate(request, username=username, password=password)
-        if user is not None:
+        if user:
             auth_login(request, user)
-
-            # Xử lý "Remember me"
             if not remember:
-                request.session.set_expiry(0)  # Phiên sẽ hết hạn khi đóng trình duyệt
-
+                request.session.set_expiry(0)
             messages.success(request, f'Welcome back, {user.username}!')
             return redirect('home')
         else:
@@ -38,7 +33,6 @@ def login_view(request):
 
 
 def logout_view(request):
-    """View for user logout"""
     auth_logout(request)
     messages.info(request, 'You have been logged out.')
     return redirect('public_home')
@@ -46,95 +40,68 @@ def logout_view(request):
 
 # Public views
 def public_home(request):
-    """View for the public home page"""
-    # Get only published articles
     published_articles = Post.objects.filter(status='published').order_by('-created_at')
+    featured_article = published_articles.first() if published_articles.exists() else None
 
-    # Get a featured article (first one or random)
-    featured_article = None
-    if published_articles.exists():
-        featured_article = published_articles.first()
-        # Exclude the featured article from the regular list
+    if featured_article:
         published_articles = published_articles.exclude(id=featured_article.id)
 
     context = {
         'featured_article': featured_article,
         'articles': published_articles,
     }
-
     return render(request, 'cms_api/public/home.html', context)
 
 
 def public_article_detail(request, pk):
-    """View for the public article detail page"""
-    # Get the article and ensure it's published
     article = get_object_or_404(Post, pk=pk, status='published')
-
-    # Get related articles (same category, excluding current)
     related_articles = Post.objects.filter(
         status='published',
         categories_name=article.categories_name
     ).exclude(id=article.id).order_by('-created_at')[:2]
 
-    # If not enough related articles in the same category, get some random ones
     if related_articles.count() < 2:
         more_articles = Post.objects.filter(
             status='published'
         ).exclude(id=article.id).exclude(
             id__in=[a.id for a in related_articles]
         ).order_by('?')[:2 - related_articles.count()]
-
         related_articles = list(related_articles) + list(more_articles)
 
     context = {
         'article': article,
         'related_articles': related_articles,
     }
-
     return render(request, 'cms_api/public/article_detail.html', context)
 
 
 # Admin views
 @login_required(login_url='login')
 def home(request):
-    # Lấy tất cả bài viết (không chỉ published)
     posts = Post.objects.all().order_by('-created_at')
-
-    # Thống kê số lượng bài viết theo trạng thái
     post_stats = {
         'published': Post.objects.filter(status='published').count(),
-        'pending': Post.objects.filter(status='pending').count() + Post.objects.filter(status='draft').count(),
+        'pending': Post.objects.filter(status__in=['pending', 'draft']).count(),
         'planned': Post.objects.filter(status='planned').count(),
         'reject': Post.objects.filter(status='reject').count(),
     }
-
-    # Truyền dữ liệu vào template
     context = {
         'posts': posts,
         'post_stats': post_stats,
-        'active_view': 'table',  # Mặc định hiển thị dạng bảng
+        'active_view': 'table',
     }
-
     return render(request, 'cms_api/home.html', context)
 
 
 @login_required(login_url='login')
 def article_detail(request, pk):
-    # Lấy chi tiết bài viết
     post = get_object_or_404(Post, pk=pk)
-
-    # Truyền dữ liệu vào template
-    context = {
-        'post': post,
-    }
-
-    return render(request, 'cms_api/article_detail.html', context)
+    return render(request, 'cms_api/article_detail.html', {'post': post})
 
 
 @login_required(login_url='login')
 def publish_article(request, pk):
-    """View for editor to publish an article"""
-    if request.method == 'POST' and (request.user.role == 'editor' or request.user.role == 'admin'):
+    if request.method == 'POST' and request.user.role in ['editor', 'admin']:
         post = get_object_or_404(Post, pk=pk)
         post.status = 'published'
         post.editor = request.user
@@ -145,8 +112,7 @@ def publish_article(request, pk):
 
 @login_required(login_url='login')
 def reject_article(request, pk):
-    """View for editor to reject an article"""
-    if request.method == 'POST' and (request.user.role == 'editor' or request.user.role == 'admin'):
+    if request.method == 'POST' and request.user.role in ['editor', 'admin']:
         post = get_object_or_404(Post, pk=pk)
         post.status = 'reject'
         post.editor = request.user
@@ -157,32 +123,25 @@ def reject_article(request, pk):
 
 @login_required(login_url='login')
 def update_article(request, pk):
-    """View for updating article information"""
     post = get_object_or_404(Post, pk=pk)
 
-    # Check edit permissions (author or editor)
-    if not (request.user == post.author or request.user.role == 'editor' or request.user.role == 'admin'):
+    if not (request.user == post.author or request.user.role in ['editor', 'admin']):
         messages.error(request, 'You do not have permission to edit this article.')
         return redirect('article_detail', pk=pk)
 
     if request.method == 'POST':
-        # Get data from form
         post.title = request.POST.get('title')
         post.content = request.POST.get('content')
         post.categories_name = request.POST.get('categories_name')
         post.tag = request.POST.get('tag')
 
-        # Update status if user is editor or admin
-        if request.user.role == 'editor' or request.user.role == 'admin':
+        if request.user.role in ['editor', 'admin']:
             post.status = request.POST.get('status')
             if post.status == 'published':
                 post.editor = request.user
 
-        # Handle image upload
         if 'image' in request.FILES:
             post.image = request.FILES['image']
-
-        # Handle file upload
         if 'file' in request.FILES:
             post.file = request.FILES['file']
 
@@ -194,9 +153,7 @@ def update_article(request, pk):
 
 @login_required(login_url='login')
 def add_article(request):
-    """View for Author to add an article"""
-    # Check if user is author or admin
-    if not (request.user.role == 'author' or request.user.role == 'admin'):
+    if request.user.role not in ['author', 'admin']:
         messages.error(request, 'You do not have permission to add articles.')
         return redirect('home')
 
@@ -205,31 +162,24 @@ def add_article(request):
         if form.is_valid():
             article = form.save(commit=False)
             article.author = request.user
-            article.status = 'pending'  # Changed from 'draft' to 'pending'
+            article.status = 'pending'
             article.save()
             messages.success(request, 'Article has been submitted for review!')
             return redirect('home')
     else:
         form = AuthorArticleForm()
 
-    context = {
-        'form': form,
-    }
-    return render(request, 'cms_api/add_article_author.html', context)
+    return render(request, 'cms_api/add_article_author.html', {'form': form})
 
 
 @login_required(login_url='login')
 def delete_article(request, pk):
-    """View for deleting an article"""
     post = get_object_or_404(Post, pk=pk)
-
-    # Check delete permissions (author or editor)
-    if not (request.user == post.author or request.user.role == 'editor' or request.user.role == 'admin'):
+    if not (request.user == post.author or request.user.role in ['editor', 'admin']):
         messages.error(request, 'You do not have permission to delete this article.')
         return redirect('article_detail', pk=pk)
 
     if request.method == 'POST':
-        # Delete the article
         post.delete()
         messages.success(request, 'Article has been deleted successfully!')
         return redirect('home')
@@ -239,55 +189,42 @@ def delete_article(request, pk):
 
 @login_required(login_url='login')
 def management_view(request):
-    """View for management page (admin only)"""
     if request.user.role != 'admin':
         messages.error(request, 'You do not have permission to access this page.')
         return redirect('home')
 
-    # Get all users
     users = User.objects.all().order_by('username')
-
-    context = {
-        'users': users,
-    }
-
-    return render(request, 'cms_api/management.html', context)
+    return render(request, 'cms_api/management.html', {'users': users})
 
 
 @login_required(login_url='login')
 def profile_view(request):
-    """View for user profile"""
-    # Get user's articles
     user_articles = Post.objects.filter(author=request.user).order_by('-created_at')
-
-    context = {
+    return render(request, 'cms_api/profile.html', {
         'user': request.user,
-        'user_articles': user_articles,
-    }
-
-    return render(request, 'cms_api/profile.html', context)
+        'user_articles': user_articles
+    })
 
 
 @login_required(login_url='login')
 def update_profile(request):
-    """View for updating user profile"""
     if request.method == 'POST':
+        user = request.user
         form_type = request.POST.get('form_type')
 
         if form_type == 'account':
-            # Cập nhật thông tin cơ bản
-            user = request.user
             user.email = request.POST.get('email')
             user.phone_number = request.POST.get('phone_number')
             user.location = request.POST.get('location')
             user.profile_summary = request.POST.get('profile_summary')
-            user.save()
 
-            messages.success(request, 'Profile has been updated successfully!')
+            if 'avatar' in request.FILES:
+                user.avatar = request.FILES['avatar']
+
+            user.save()
+            messages.success(request, "Profile updated successfully.")
 
         elif form_type == 'password':
-            # Xử lý thay đổi mật khẩu
-            user = request.user
             current_password = request.POST.get('current_password')
             new_password = request.POST.get('new_password')
             confirm_password = request.POST.get('confirm_password')
@@ -300,18 +237,13 @@ def update_profile(request):
                 messages.error(request, 'New passwords do not match.')
                 return redirect('profile')
 
-            # Kiểm tra mật khẩu hiện tại
             if not user.check_password(current_password):
                 messages.error(request, 'Current password is incorrect.')
                 return redirect('profile')
 
-            # Đổi mật khẩu
             user.set_password(new_password)
             user.save()
-
-            # Cập nhật session để không bị đăng xuất
             update_session_auth_hash(request, user)
-
             messages.success(request, 'Password has been changed successfully.')
 
     return redirect('profile')

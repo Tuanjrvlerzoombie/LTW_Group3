@@ -27,7 +27,8 @@
       }
     </style>
   </head>
-  <body class="login-page">
+  <body class="login-page"
+      style="background-image: url('https://hoangphuconline.vn/media/magefan_blog/2021/12/hinh-nen-dep-96-scaled.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <div class="login-container">
       <!-- Thêm nút back -->
       <a href="{% url 'public_home' %}" class="back-button">
@@ -36,7 +37,7 @@
 
       <div class="login-form-container">
         <div class="login-logo">
-          <img src="{% static 'cms_api/img/logo.png' %}" alt="DUE Logo" class="logo-image" />
+          <img src="{% static '/img/logo.png' %}" alt="DUE Logo" class="logo-image" />
           <h1>DUE</h1>
         </div>
 
@@ -85,12 +86,7 @@
         </form>
       </div>
 
-      <div class="login-illustration">
-        <img
-          src="{% static 'cms_api/img/city-skyline.jpg' %}"
-          alt="City Skyline Illustration"
-        />
-      </div>
+
     </div>
   </body>
 </html>
