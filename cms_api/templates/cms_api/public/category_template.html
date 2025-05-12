@@ -1,0 +1,63 @@
+{% extends 'cms_api/public/base.html' %}
+{% load static %}
+
+{% block title %}FLIC - DUE | {{ category_name }}{% endblock %}
+
+{% block content %}
+<div class="article-ctn">
+    {% if featured_article %}
+    <div class="featured-article" data-category="{{ featured_article.categories_name|lower }}" onclick="window.location.href='{% url 'public_article_detail' featured_article.id %}'" style="cursor: pointer;">
+        <div class="featured-image">
+            {% if featured_article.image %}
+                <img src="{{ featured_article.image.url }}" alt="{{ featured_article.title }}" />
+            {% else %}
+                <img src="{% static 'cms_api/img/it-certificate.jpg' %}" alt="Default Image" />
+            {% endif %}
+        </div>
+        <div class="featured-content">
+            <h2>{{ featured_article.title }}</h2>
+            <p class="article-summary">{{ featured_article.content|truncatewords:50 }}</p>
+            <div class="article-meta">
+                <span class="author">Author: {{ featured_article.author.username }}</span>
+                <span class="date">{{ featured_article.created_at|date:"d-M-Y" }} ({{ featured_article.created_at|time:"H:i" }})</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% for article in articles %}
+    <div class="article-section">
+        <div class="article-grid">
+            <div class="article-card" data-category="{{ article.categories_name|lower }}" onclick="window.location.href='{% url 'public_article_detail' article.id %}'">
+                <div class="article-image">
+                    {% if article.image %}
+                        <img src="{{ article.image.url }}" alt="{{ article.title }}" />
+                    {% else %}
+                        <img src="{% static 'cms_api/img/it-certificate.jpg' %}" alt="{{ article.title }}" />
+                    {% endif %}
+                </div>
+                <div class="article-info">
+                    <p class="article-summary">{{ article.content|truncatewords:20 }}</p>
+                    <span class="author">Author: {{ article.author.username }}</span>
+                    <span class="date">{{ article.created_at|date:"d-M-Y" }} ({{ article.created_at|time:"H:i" }})</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-message no-articles">
+        <p>No articles found in {{ category_name }}.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{% static 'cms_api/js/SearchAndFilterBar.js' %}"></script>
+<script type="module">
+    import { initializeSearchAndFilter } from "{% static 'cms_api/js/SearchAndFilterBar.js' %}";
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeSearchAndFilter();
+    });
+</script>
+{% endblock %}

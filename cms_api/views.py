@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, update_session_auth_hash
@@ -39,17 +41,96 @@ def logout_view(request):
 
 
 # Public views
-def public_home(request):
-    published_articles = Post.objects.filter(status='published').order_by('-created_at')
-    featured_article = published_articles.first() if published_articles.exists() else None
+# def public_home(request):
+#     published_articles = Post.objects.filter(status='published').order_by('-created_at')
+#     featured_article = published_articles.first() if published_articles.exists() else None
+#
+#     if featured_article:
+#         published_articles = published_articles.exclude(id=featured_article.id)
+#
+#     context = {
+#         'featured_article': featured_article,
+#         'articles': published_articles,
+#     }
+#     return render(request, 'cms_api/public/home.html', context)
 
-    if featured_article:
-        published_articles = published_articles.exclude(id=featured_article.id)
+def public_home(request):
+    keyword = request.GET.get('search', '')
+    category = request.GET.get('category', '')
+    start_day = request.GET.get('start_day', '')
+    end_day = request.GET.get('end_day', '')
+    form_submitted = request.GET.get('form_submitted', '')
+
+    articles = Post.objects.filter(status='published')
+
+    # Áp dụng bộ lọc nếu form được submit hoặc có tham số search từ thanh search
+    if form_submitted or keyword:
+        if keyword:
+            if keyword:
+                if keyword.startswith("author:"):
+                    author_name = keyword.split("author:")[1].strip()
+                    articles = articles.filter(author__username__icontains=author_name)
+                elif keyword.startswith("category:"):
+                    category_name = keyword.split("category:")[1].strip()
+                    articles = articles.filter(categories_name__iexact=category_name)
+                else:
+                    articles = articles.filter(
+                        Q(title__icontains=keyword) |
+                        Q(content__icontains=keyword)
+                    )
+
+        if category and category != 'all categories':
+            articles = articles.filter(categories_name__iexact=category)
+
+        if start_day or end_day:
+            try:
+                # Parse dates with timezone awareness
+                start_date = datetime.strptime(start_day, '%d-%b-%Y') if start_day else None
+                end_date = datetime.strptime(end_day, '%d-%b-%Y') if end_day else None
+
+                # Adjust for full day coverage
+                if start_date:
+                    start_date = start_date.replace(hour=0, minute=0, second=0)
+                if end_date:
+                    end_date = end_date.replace(hour=23, minute=59, second=59)
+
+                # Apply date filters
+                if start_date and end_date:
+                    if end_date < start_date:
+                        messages.warning(request, "End date cannot be earlier than start date.")
+                    else:
+                        articles = articles.filter(created_at__range=(start_date, end_date))
+                elif start_date:
+                    articles = articles.filter(created_at__gte=start_date)
+                elif end_date:
+                    articles = articles.filter(created_at__lte=end_date)
+
+            except ValueError as e:
+                messages.warning(request, f"Invalid date format: {str(e)}. Please use DD-MMM-YYYY (e.g., 11-May-2025).")
+
+    # Order and get featured article
+    articles = articles.order_by('-created_at')
+    featured_article = None
+    articles_list = list(articles)
+    if articles_list:
+        featured_article = articles_list.pop(0)
+        articles = articles_list
+    else:
+        articles = []
+
+    # # Hiển thị thông báo nếu có bộ lọc và không tìm thấy bài viết
+    # if (form_submitted or keyword) and not articles and not featured_article:
+    #     messages.info(request, f"No matching articles found for {'category: ' + category if category and category != 'all categories' else ''}{'start date: ' + start_day + ', end date: ' + end_day if start_day and end_day else ''}{'search term: ' + keyword if keyword else ''}".strip())
 
     context = {
         'featured_article': featured_article,
-        'articles': published_articles,
+        'articles': articles,
+        'search_query': keyword,
+        'selected_category': category,
+        'start_day': start_day,
+        'end_day': end_day,
     }
+
     return render(request, 'cms_api/public/home.html', context)
 
 
@@ -247,3 +328,313 @@ def update_profile(request):
             messages.success(request, 'Password has been changed successfully.')
 
     return redirect('profile')
+
+
+# Public view (Thanh điều hướng)
+# Thanh search
+def search_view(request):
+    query = request.GET.get('search', '')
+    category = request.GET.get('category', '')
+    start_day = request.GET.get('start_day', '')
+    end_day = request.GET.get('end_day', '')
+
+    articles = Post.objects.filter(status='published')
+
+    if query:
+        articles = articles.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(author__username__icontains=query) |
+            Q(categories_name__icontains=query)
+        )
+
+    if category and category != 'all categories':
+        articles = articles.filter(categories_name__iexact=category)
+
+    if start_day:
+        try:
+            start_date = datetime.strptime(start_day, '%d-%b-%Y')
+            articles = articles.filter(created_at__gte=start_date)
+        except ValueError:
+            pass
+
+    if end_day:
+        try:
+            end_date = datetime.strptime(end_day, '%d-%b-%Y')
+            articles = articles.filter(created_at__lte=end_date)
+        except ValueError:
+            pass
+
+    articles = articles.order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+
+    if query and not articles and not featured_article:
+        messages.info(request, f"No matching articles found for search: '{query}'")
+
+    context = {
+        'featured_article': featured_article,
+        'articles': articles,
+        'search_query': query,
+        'selected_category': category,
+        'start_day': start_day,
+        'end_day': end_day,
+    }
+
+    return render(request, 'cms_api/public/home.html', context)
+
+
+# View cho từng category
+def vocabulary_view(request):
+    articles = Post.objects.filter(status='published', categories_name='vocabulary').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Vocabulary'
+    })
+
+def grammar_view(request):
+    articles = Post.objects.filter(status='published', categories_name='grammar').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Grammar'
+    })
+
+def listening_view(request):
+    articles = Post.objects.filter(status='published', categories_name='listening').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Listening'
+    })
+
+def speaking_view(request):
+    articles = Post.objects.filter(status='published', categories_name='speaking').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Speaking'
+    })
+
+def reading_view(request):
+    articles = Post.objects.filter(status='published', categories_name='reading').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Reading'
+    })
+
+def writing_view(request):
+    articles = Post.objects.filter(status='published', categories_name='writing').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Writing'
+    })
+
+def exams_view(request):
+    articles = Post.objects.filter(status='published', categories_name='exams').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'English Exams'
+    })
+
+def conversational_view(request):
+    articles = Post.objects.filter(status='published', categories_name='conversational').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Conversational English'
+    })
+
+def business_view(request):
+    articles = Post.objects.filter(status='published', categories_name='business').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Business English'
+    })
+
+def culture_view(request):
+    articles = Post.objects.filter(status='published', categories_name='culture').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'English Culture'
+    })
+
+def resources_view(request):
+    articles = Post.objects.filter(status='published', categories_name='resources').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Free Resources'
+    })
+
+def community_view(request):
+    articles = Post.objects.filter(status='published', categories_name='community').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Community'
+    })
+
+def ielts_view(request):
+    articles = Post.objects.filter(status='published', categories_name='ielts').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'IELTS'
+    })
+
+def toeic_view(request):
+    articles = Post.objects.filter(status='published', categories_name='toeic').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'TOEIC'
+    })
+
+def toefl_view(request):
+    articles = Post.objects.filter(status='published', categories_name='toefl').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'TOEFL'
+    })
+
+def cambridge_view(request):
+    articles = Post.objects.filter(status='published', categories_name='cambridge').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Cambridge'
+    })
+
+def pronunciation_view(request):
+    articles = Post.objects.filter(status='published', categories_name='pronunciation').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Pronunciation'
+    })
+
+def idioms_view(request):
+    articles = Post.objects.filter(status='published', categories_name='idioms').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Idioms'
+    })
+
+def phrasal_verbs_view(request):
+    articles = Post.objects.filter(status='published', categories_name='phrasal_verbs').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Phrasal Verbs'
+    })
+
+def podcasts_view(request):
+    articles = Post.objects.filter(status='published', categories_name='podcasts').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Podcasts'
+    })
+
+def videos_view(request):
+    articles = Post.objects.filter(status='published', categories_name='videos').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Videos'
+    })
+
+def apps_view(request):
+    articles = Post.objects.filter(status='published', categories_name='apps').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Apps'
+    })
+
+def books_view(request):
+    articles = Post.objects.filter(status='published', categories_name='books').order_by('-created_at')
+    featured_article = articles.first() if articles.exists() else None
+    if featured_article:
+        articles = articles.exclude(id=featured_article.id)
+    return render(request, 'cms_api/public/category_template.html', {
+        'featured_article': featured_article,
+        'articles': articles,
+        'category_name': 'Books'
+    })
