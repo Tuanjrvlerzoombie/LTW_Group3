@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('cms_api.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 
 # Phục vụ media files trong môi trường phát triển

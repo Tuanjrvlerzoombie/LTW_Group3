@@ -4,7 +4,15 @@
 {% block title %}FLIC - DUE | {{ category_name }}{% endblock %}
 
 {% block content %}
-<div class="article-ctn">
+
+
+<!-- Tiêu đề danh mục -->
+<h1 style="margin: 1rem 0;">{{ category_name }}</h1>
+
+<!-- Nếu có bài viết -->
+{% if featured_article or articles|length > 0 %}
+
+    <!-- Bài viết nổi bật đầu tiên -->
     {% if featured_article %}
     <div class="featured-article" data-category="{{ featured_article.categories_name|lower }}" onclick="window.location.href='{% url 'public_article_detail' featured_article.id %}'" style="cursor: pointer;">
         <div class="featured-image">
@@ -25,39 +33,49 @@
     </div>
     {% endif %}
 
-    {% for article in articles %}
-    <div class="article-section">
+    <!-- Danh sách các bài viết còn lại (grid) -->
+    <div class="article-ctn">
         <div class="article-grid">
-            <div class="article-card" data-category="{{ article.categories_name|lower }}" onclick="window.location.href='{% url 'public_article_detail' article.id %}'">
-                <div class="article-image">
-                    {% if article.image %}
-                        <img src="{{ article.image.url }}" alt="{{ article.title }}" />
-                    {% else %}
-                        <img src="{% static 'cms_api/img/it-certificate.jpg' %}" alt="{{ article.title }}" />
-                    {% endif %}
+            {% for article in articles %}
+                {% if article.id != featured_article.id %}
+                <div class="article-card" data-category="{{ article.categories_name|lower }}" onclick="window.location.href='{% url 'public_article_detail' article.id %}'">
+                    <h3>{{ article.title }}</h3>  <!-- TIÊU ĐỀ MỖI BÀI -->
+                    <div class="article-image">
+                        {% if article.image %}
+                            <img src="{{ article.image.url }}" alt="{{ article.title }}" />
+                        {% else %}
+                            <img src="{% static 'cms_api/img/it-certificate.jpg' %}" alt="{{ article.title }}" />
+                        {% endif %}
+                    </div>
+                    <div class="article-info">
+                        <p class="article-summary">{{ article.content|truncatewords:20 }}</p>
+                        <span class="author">Author: {{ article.author.username }}</span>
+                        <span class="date">{{ article.created_at|date:"d-M-Y" }} ({{ article.created_at|time:"H:i" }})</span>
+                    </div>
                 </div>
-                <div class="article-info">
-                    <p class="article-summary">{{ article.content|truncatewords:20 }}</p>
-                    <span class="author">Author: {{ article.author.username }}</span>
-                    <span class="date">{{ article.created_at|date:"d-M-Y" }} ({{ article.created_at|time:"H:i" }})</span>
-                </div>
-            </div>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
-    {% empty %}
+
+{% else %}
     <div class="empty-message no-articles">
-        <p>No articles found in {{ category_name }}.</p>
+        <p>No matching articles found in {{ category_name }}.</p>
     </div>
-    {% endfor %}
-</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.article-card h3 {
+    font-size 20px;
+    margin-bottom: 15px;
+    color: #153060;
+}
+</style>
 {% endblock %}
 
 {% block scripts %}
-<script type="module" src="{% static 'cms_api/js/SearchAndFilterBar.js' %}"></script>
-<script type="module">
-    import { initializeSearchAndFilter } from "{% static 'cms_api/js/SearchAndFilterBar.js' %}";
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeSearchAndFilter();
-    });
-</script>
+{{ block.super }}
 {% endblock %}
