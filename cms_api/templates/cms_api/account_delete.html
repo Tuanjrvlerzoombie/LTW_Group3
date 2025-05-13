@@ -1,0 +1,36 @@
+{% extends 'cms_api/base.html' %}
+{% load static %}
+
+{% block title %}Delete Account - FLIC - DUE{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Delete Account</h1>
+    <div class="header-actions">
+        <a href="{% url 'account_management' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Accounts
+        </a>
+    </div>
+</div>
+
+<div class="content-section">
+    <div class="message warning">
+        <p>Are you sure you want to delete the account for <strong>{{ user.username }}</strong>?</p>
+        <p>This action cannot be undone.</p>
+    </div>
+
+    <div class="user-info">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Role:</strong> {{ user.role|title }}</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Delete Account</button>
+            <a href="{% url 'account_management' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'cms_api/base.html' %}
+{% load static %}
+
+{% block title %}User Management - FLIC - DUE{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>User Management</h1>
+    <div class="header-actions">
+        <a href="{% url 'activity_list' %}" class="btn btn-success">
+            <i class="fas fa-chart-line"></i> Activity Management
+        </a>
+        <a href="{% url 'user_add' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Account
+        </a>
+        <div class="search-container">
+            <input type="text" placeholder="Search users" id="searchInput" />
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>
+                    <div class="user-avatar-small"></div>
+                    {{ user.username }}
+                </td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role|title }}</td>
+                <td>
+                    <span class="status {% if user.is_active %}online{% else %}offline{% endif %}">
+                        <i class="fas fa-circle"></i>
+                        {% if user.is_active %}Active{% else %}Inactive{% endif %}
+                    </span>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'user_edit' user.id %}" class="btn-icon btn-view">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'user_delete' user.id %}" class="btn-icon btn-delete">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No users found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    // Search functionality
+    if (searchBtn && searchInput) {
+        searchBtn.addEventListener('click', function() {
+            filterTable(searchInput.value.toLowerCase());
+        });
+
+        searchInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                filterTable(this.value.toLowerCase());
+            }
+        });
+    }
+
+    function filterTable(query) {
+        const rows = document.querySelectorAll('.data-table tbody tr');
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

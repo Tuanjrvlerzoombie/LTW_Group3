@@ -1,0 +1,478 @@
+{% extends 'cms_api/base.html' %}
+{% load static %}
+
+{% block title %}Account Management - FLIC - DUE{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Account</h1>
+    <div class="header-actions">
+        <a href="{% url 'activity_management' %}" class="btn btn-success">
+            Activity Management
+        </a>
+        <button id="newAccountBtn" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Account
+        </button>
+        <div class="select-wrapper">
+            <select id="roleFilter">
+                <option value="">All Roles</option>
+                <option value="admin">Admin</option>
+                <option value="editor">Editor</option>
+                <option value="author">Author</option>
+                <option value="viewer">Viewer</option>
+                <option value="user">User</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Role</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.role|title }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.password_display }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-icon btn-view edit-user-btn" data-user-id="{{ user.id }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <a href="{% url 'account_delete' user.id %}" class="btn-icon btn-delete">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No accounts found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add New User Modal -->
+<div id="newUserModal" class="modal">
+    <div class="modal-content user-modal">
+        <div class="modal-header">
+            <h2>Add New User</h2>
+            <button class="close-btn" id="closeNewModalBtn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="tabs">
+                <div class="tab active" data-tab="basic-info">Basic Info</div>
+                <div class="tab" data-tab="professional-info">Professional Info</div>
+            </div>
+
+            <form id="newUserForm" method="post" action="{% url 'account_add' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="tab-content" id="basic-info-content">
+                    <div class="photo-upload">
+                        <div class="photo-placeholder">
+                            <div class="avatar-preview"></div>
+                        </div>
+                        <div class="upload-info">
+                            <h3>Upload New Photo</h3>
+                            <p>JPG, PNG or JPEG is allowed</p>
+                            <label for="avatar" class="browse-btn">
+                                <i class="fas fa-upload"></i> Browse
+                            </label>
+                            <input type="file" id="avatar" name="avatar" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="first_name">First Name <span class="required">*</span></label>
+                            <input type="text" id="first_name" name="first_name" class="form-control" placeholder="First Name" required>
+                        </div>
+                        <div class="form-group half">
+                            <label for="last_name">Last Name <span class="required">*</span></label>
+                            <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Last Name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="phone_number">WhatsApp No. <span class="required">*</span></label>
+                            <input type="text" id="phone_number" name="phone_number" class="form-control" placeholder="WhatsApp Number" required>
+                        </div>
+                        <div class="form-group half">
+                            <label for="password">Password <span class="required">*</span></label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" name="location" class="form-control" placeholder="Location">
+                        </div>
+                        <div class="form-group half">
+                            <label for="email">Email Address <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="Email Address" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profile_summary">Profile Summary <span class="required">*</span></label>
+                        <textarea id="profile_summary" name="profile_summary" class="form-control" rows="4" placeholder="Write a brief summary about the user" required></textarea>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="professional-info-content" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="username">Username <span class="required">*</span></label>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required>
+                        </div>
+                        <div class="form-group half">
+                            <label for="role">Role <span class="required">*</span></label>
+                            <select id="role" name="role" class="form-control" required>
+                                <option value="admin">Admin</option>
+                                <option value="editor">Editor</option>
+                                <option value="author">Author</option>
+                                <option value="viewer">Viewer</option>
+                                <option value="user">User</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="is_active">Status</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="is_active" name="is_active" checked>
+                            <label for="is_active">Active</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save User</button>
+                    <button type="button" class="btn btn-secondary" id="cancelNewBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="modal">
+    <div class="modal-content user-modal">
+        <div class="modal-header">
+            <h2>Edit User</h2>
+            <button class="close-btn" id="closeEditModalBtn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="tabs">
+                <div class="tab active" data-tab="edit-basic-info">Basic Info</div>
+                <div class="tab" data-tab="edit-professional-info">Professional Info</div>
+            </div>
+
+            <form id="editUserForm" method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="tab-content" id="edit-basic-info-content">
+                    <div class="photo-upload">
+                        <div class="photo-placeholder">
+                            <div class="edit-avatar-preview"></div>
+                        </div>
+                        <div class="upload-info">
+                            <h3>Upload New Photo</h3>
+                            <p>JPG, PNG or JPEG is allowed</p>
+                            <label for="edit_avatar" class="browse-btn">
+                                <i class="fas fa-upload"></i> Browse
+                            </label>
+                            <input type="file" id="edit_avatar" name="avatar" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="edit_first_name">First Name <span class="required">*</span></label>
+                            <input type="text" id="edit_first_name" name="first_name" class="form-control" placeholder="First Name" required>
+                        </div>
+                        <div class="form-group half">
+                            <label for="edit_last_name">Last Name <span class="required">*</span></label>
+                            <input type="text" id="edit_last_name" name="last_name" class="form-control" placeholder="Last Name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="edit_phone_number">WhatsApp No. <span class="required">*</span></label>
+                            <input type="text" id="edit_phone_number" name="phone_number" class="form-control" placeholder="WhatsApp Number" required>
+                        </div>
+                        <div class="form-group half">
+                            <label for="edit_password">Password <span class="required">*</span></label>
+                            <input type="password" id="edit_password" name="password" class="form-control" placeholder="Leave blank to keep current password">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="edit_location">Location</label>
+                            <input type="text" id="edit_location" name="location" class="form-control" placeholder="Location">
+                        </div>
+                        <div class="form-group half">
+                            <label for="edit_email">Email Address <span class="required">*</span></label>
+                            <input type="email" id="edit_email" name="email" class="form-control" placeholder="Email Address" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_profile_summary">Profile Summary <span class="required">*</span></label>
+                        <textarea id="edit_profile_summary" name="profile_summary" class="form-control" rows="4" placeholder="Write a brief summary about the user" required></textarea>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="edit-professional-info-content" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="edit_username">Username <span class="required">*</span></label>
+                            <input type="text" id="edit_username" name="username" class="form-control" placeholder="Username" required>
+                        </div>
+                        <div class="form-group half">
+                            <label for="edit_role">Role <span class="required">*</span></label>
+                            <select id="edit_role" name="role" class="form-control" required>
+                                <option value="admin">Admin</option>
+                                <option value="editor">Editor</option>
+                                <option value="author">Author</option>
+                                <option value="viewer">Viewer</option>
+                                <option value="user">User</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_is_active">Status</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="edit_is_active" name="is_active">
+                            <label for="edit_is_active">Active</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Update User</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Role filter functionality
+    const roleFilter = document.getElementById('roleFilter');
+    if (roleFilter) {
+        roleFilter.addEventListener('change', function() {
+            const role = this.value;
+            window.location.href = `?role=${role}`;
+        });
+
+        // Set the current filter value from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const roleParam = urlParams.get('role');
+        if (roleParam) {
+            roleFilter.value = roleParam;
+        }
+    }
+
+    // New User Modal functionality
+    const newModal = document.getElementById('newUserModal');
+    const newAccountBtn = document.getElementById('newAccountBtn');
+    const closeNewModalBtn = document.getElementById('closeNewModalBtn');
+    const cancelNewBtn = document.getElementById('cancelNewBtn');
+
+    if (newAccountBtn) {
+        newAccountBtn.addEventListener('click', function() {
+            newModal.style.display = 'flex';
+        });
+    }
+
+    if (closeNewModalBtn) {
+        closeNewModalBtn.addEventListener('click', function() {
+            newModal.style.display = 'none';
+        });
+    }
+
+    if (cancelNewBtn) {
+        cancelNewBtn.addEventListener('click', function() {
+            newModal.style.display = 'none';
+        });
+    }
+
+    // Edit User Modal functionality
+    const editModal = document.getElementById('editUserModal');
+    const editUserBtns = document.querySelectorAll('.edit-user-btn');
+    const closeEditModalBtn = document.getElementById('closeEditModalBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const editUserForm = document.getElementById('editUserForm');
+
+    editUserBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            fetchUserData(userId);
+        });
+    });
+
+    if (closeEditModalBtn) {
+        closeEditModalBtn.addEventListener('click', function() {
+            editModal.style.display = 'none';
+        });
+    }
+
+    if (cancelEditBtn) {
+        cancelEditBtn.addEventListener('click', function() {
+            editModal.style.display = 'none';
+        });
+    }
+
+    // Close modals when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === newModal) {
+            newModal.style.display = 'none';
+        }
+        if (event.target === editModal) {
+            editModal.style.display = 'none';
+        }
+    });
+
+    // Tab functionality for New User Modal
+    const newTabs = document.querySelectorAll('#newUserModal .tab');
+    const newTabContents = document.querySelectorAll('#newUserModal .tab-content');
+
+    newTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+
+            // Remove active class from all tabs and hide all tab contents
+            newTabs.forEach(t => t.classList.remove('active'));
+            newTabContents.forEach(content => content.style.display = 'none');
+
+            // Add active class to clicked tab and show corresponding content
+            this.classList.add('active');
+            document.getElementById(`${tabId}-content`).style.display = 'block';
+        });
+    });
+
+    // Tab functionality for Edit User Modal
+    const editTabs = document.querySelectorAll('#editUserModal .tab');
+    const editTabContents = document.querySelectorAll('#editUserModal .tab-content');
+
+    editTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+
+            // Remove active class from all tabs and hide all tab contents
+            editTabs.forEach(t => t.classList.remove('active'));
+            editTabContents.forEach(content => content.style.display = 'none');
+
+            // Add active class to clicked tab and show corresponding content
+            this.classList.add('active');
+            document.getElementById(`${tabId}-content`).style.display = 'block';
+        });
+    });
+
+    // Avatar preview for New User Modal
+    const avatarInput = document.getElementById('avatar');
+    const avatarPreview = document.querySelector('.avatar-preview');
+
+    if (avatarInput) {
+        avatarInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    avatarPreview.style.backgroundImage = `url(${e.target.result})`;
+                    avatarPreview.textContent = '';
+                };
+
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+
+    // Avatar preview for Edit User Modal
+    const editAvatarInput = document.getElementById('edit_avatar');
+    const editAvatarPreview = document.querySelector('.edit-avatar-preview');
+
+    if (editAvatarInput) {
+        editAvatarInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    editAvatarPreview.style.backgroundImage = `url(${e.target.result})`;
+                    editAvatarPreview.textContent = '';
+                };
+
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+
+    // Function to fetch user data for editing
+    function fetchUserData(userId) {
+        fetch(`/admin-dashboard/accounts/${userId}/get-data/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Set form action
+                editUserForm.action = `/admin-dashboard/accounts/${userId}/edit/`;
+
+                // Fill form fields with user data
+                document.getElementById('edit_username').value = data.username;
+                document.getElementById('edit_email').value = data.email;
+                document.getElementById('edit_first_name').value = data.first_name || '';
+                document.getElementById('edit_last_name').value = data.last_name || '';
+                document.getElementById('edit_phone_number').value = data.phone_number || '';
+                document.getElementById('edit_location').value = data.location || '';
+                document.getElementById('edit_profile_summary').value = data.profile_summary || '';
+                document.getElementById('edit_role').value = data.role;
+                document.getElementById('edit_is_active').checked = data.is_active;
+
+                // Set avatar preview if available
+                if (data.avatar) {
+                    editAvatarPreview.style.backgroundImage = `url(${data.avatar})`;
+                    editAvatarPreview.textContent = '';
+                } else {
+                    editAvatarPreview.style.backgroundImage = '';
+                    editAvatarPreview.textContent = data.username.charAt(0).toUpperCase();
+                }
+
+                // Show the modal
+                editModal.style.display = 'flex';
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+                alert('Error fetching user data. Please try again.');
+            });
+    }
+});
+</script>
+{% endblock %}
