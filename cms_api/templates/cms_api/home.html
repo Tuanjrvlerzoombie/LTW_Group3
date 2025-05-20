@@ -21,23 +21,6 @@
 
 <div class="filters">
     <div class="filter-group">
-<<<<<<< HEAD
-        <label>Date</label>
-        <div class="select-wrapper">
-            <select>
-                <option>All Dates</option>
-            </select>
-        </div>
-    </div>
-    <div class="filter-group">
-        <label>Category</label>
-        <div class="select-wrapper">
-            <select>
-                <option>All Types</option>
-                <option>Event</option>
-                <option>Knowledge</option>
-                <option>Course</option>
-=======
         <label>Category</label>
         <div class="select-wrapper">
             <select id="categoryFilter">
@@ -69,25 +52,12 @@
                 <option value="videos">Videos</option>
                 <option value="apps">Apps</option>
                 <option value="books">Books</option>
->>>>>>> 8450a53 (Tuan)
             </select>
         </div>
     </div>
     <div class="filter-group">
         <label>Status</label>
         <div class="select-wrapper">
-<<<<<<< HEAD
-            <select>
-                <option>All Status</option>
-                <option>Published</option>
-                <option>Pending</option>
-                <option>Planned</option>
-                <option>Rejected</option>
-            </select>
-        </div>
-    </div>
-    <button class="btn btn-primary getdata">Get Data</button>
-=======
             <select id="statusFilter">
                 <option value="all">All Status</option>
                 <option value="published">Published</option>
@@ -98,7 +68,6 @@
         </div>
     </div>
     <button class="btn btn-primary getdata" id="filterBtn">Get Data</button>
->>>>>>> 8450a53 (Tuan)
 </div>
 
 <div class="stats">
@@ -119,11 +88,7 @@
     </div>
     <div class="stat-card red">
         <div class="stat-number">{{ post_stats.reject }}</div>
-<<<<<<< HEAD
-        <div class="stat-label">Rejected</div>
-=======
         <div class="stat-label">Hold/Reject</div>
->>>>>>> 8450a53 (Tuan)
         <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
     </div>
 </div>
@@ -143,11 +108,7 @@
         </thead>
         <tbody>
             {% for post in posts %}
-<<<<<<< HEAD
-            <tr class="article-row" data-id="{{ post.id }}">
-=======
             <tr class="article-row" data-id="{{ post.id }}" data-category="{{ post.categories_name }}" data-status="{{ post.status }}">
->>>>>>> 8450a53 (Tuan)
                 <td>{{ post.id }}</td>
                 <td>
                     <div class="user-avatar-small"></div>
@@ -191,31 +152,11 @@
 <div class="grid-view" id="gridView" style="display: {% if active_view == 'grid' %}block{% else %}none{% endif %};">
     <div class="article-grid">
         {% for post in posts %}
-<<<<<<< HEAD
-        <div class="article-card" data-id="{{ post.id }}">
-=======
         <div class="article-card" data-id="{{ post.id }}" data-category="{{ post.categories_name }}" data-status="{{ post.status }}">
->>>>>>> 8450a53 (Tuan)
             <div class="article-image">
                 {% if post.image %}
                 <img src="{{ post.image.url }}" alt="{{ post.title }}">
                 {% else %}
-<<<<<<< HEAD
-                <i class="fas fa-image"></i>
-                {% endif %}
-            </div>
-            <div class="article-content">
-                <h3>{{ post.title }}</h3>
-                <div class="article-meta">{{ post.created_at|date:"d-m-Y" }} {{ post.created_at|time:"G:i" }}</div>
-                <div class="article-tag {{ post.categories_name|lower }}">{{ post.categories_name }}</div>
-                <div class="status-badge
-                    {% if post.status == 'published' %}published
-                    {% elif post.status == 'pending' %}pending
-                    {% elif post.status == 'draft' %}pending
-                    {% elif post.status == 'planned' %}planned
-                    {% elif post.status == 'reject' %}unpublished
-                    {% endif %}">
-=======
                 <div class="placeholder-image">
                     <i class="fas fa-image"></i>
                 </div>
@@ -227,7 +168,6 @@
                     {{ post.categories_name|title }}
                 </div>
                 <div class="article-status-tag {{ post.status }}">
->>>>>>> 8450a53 (Tuan)
                     {% if post.status == 'published' %}Published
                     {% elif post.status == 'pending' %}Pending
                     {% elif post.status == 'draft' %}Pending
@@ -235,18 +175,11 @@
                     {% elif post.status == 'reject' %}Rejected
                     {% endif %}
                 </div>
-<<<<<<< HEAD
-            </div>
-        </div>
-        {% empty %}
-        <div class="empty-message">Không tìm thấy bài viết nào.</div>
-=======
                 <div class="article-date">{{ post.created_at|date:"d-M-Y H:i" }}</div>
             </div>
         </div>
         {% empty %}
         <div class="empty-message">No articles found.</div>
->>>>>>> 8450a53 (Tuan)
         {% endfor %}
     </div>
 </div>
@@ -293,8 +226,6 @@
 </div>
 {% endblock %}
 
-<<<<<<< HEAD
-=======
 {% block extra_css %}
 <style>
 /* Grid View Styles */
@@ -382,7 +313,6 @@
     font-weight: 500;
     margin-bottom: 10px;
     color: white;
-    width:72px;
 }
 
 .article-status-tag.published {
@@ -613,19 +543,19 @@
 }
 
 .status.published {
-    background-color: #f5f5f5; /* Green */
+    background-color: #ecf0f1; /* Green */
 }
 
 .status.pending {
-    background-color: #f5f5f5; /* Yellow/Orange */
+    background-color: #ecf0f1; /* Yellow/Orange */
 }
 
 .status.planned {
-    background-color: #f5f5f5; /* Blue */
+    background-color: #ecf0f1; /* Blue */
 }
 
 .status.unpublished {
-    background-color: #f5f5f5; /* Red */
+    background-color: #ecf0f1; /* Red */
 }
 
 /* Search container styles */
@@ -685,7 +615,6 @@
 </style>
 {% endblock %}
 
->>>>>>> 8450a53 (Tuan)
 {% block scripts %}
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -694,9 +623,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const tableView = document.getElementById("tableView");
     const gridView = document.getElementById("gridView");
 
-<<<<<<< HEAD
-    if (changeViewBtn && tableView && gridView) {
-=======
     // Biến lưu trữ trạng thái lọc hiện tại
     let currentCategoryFilter = 'all';
     let currentStatusFilter = 'all';
@@ -708,14 +634,11 @@ document.addEventListener("DOMContentLoaded", () => {
             changeViewBtn.classList.add("active");
         }
 
->>>>>>> 8450a53 (Tuan)
         changeViewBtn.addEventListener("click", () => {
             if (tableView.style.display === "none") {
                 tableView.style.display = "block";
                 gridView.style.display = "none";
                 changeViewBtn.classList.remove("active");
-<<<<<<< HEAD
-=======
                 // Lưu trạng thái vào localStorage
                 localStorage.setItem("viewMode", "table");
 
@@ -723,15 +646,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (currentCategoryFilter !== 'all' || currentStatusFilter !== 'all' || currentSearchQuery !== '') {
                     filterArticles(currentCategoryFilter, currentStatusFilter, currentSearchQuery);
                 }
->>>>>>> 8450a53 (Tuan)
             } else {
                 tableView.style.display = "none";
                 gridView.style.display = "block";
                 changeViewBtn.classList.add("active");
-<<<<<<< HEAD
-            }
-        });
-=======
                 // Lưu trạng thái vào localStorage
                 localStorage.setItem("viewMode", "grid");
 
@@ -753,7 +671,6 @@ document.addEventListener("DOMContentLoaded", () => {
             gridView.style.display = "none";
             changeViewBtn.classList.remove("active");
         }
->>>>>>> 8450a53 (Tuan)
     }
 
     // Thêm sự kiện click cho các hàng bài viết trong chế độ xem bảng
@@ -773,8 +690,6 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = `/admin-dashboard/article/${articleId}/`;
         });
     });
-<<<<<<< HEAD
-=======
 
     // Xử lý lọc bài viết
     const filterBtn = document.getElementById("filterBtn");
@@ -951,7 +866,6 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem("searchQuery", this.value);
         });
     }
->>>>>>> 8450a53 (Tuan)
 });
 </script>
 {% endblock %}

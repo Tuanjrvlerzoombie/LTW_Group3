@@ -5,10 +5,6 @@
 
 {% block content %}
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 8450a53 (Tuan)
 <!-- Tiêu đề danh mục -->
 <h1 style="margin: 1rem 0;">{{ category_name }}</h1>
 
@@ -27,11 +23,7 @@
         </div>
         <div class="featured-content">
             <h2>{{ featured_article.title }}</h2>
-<<<<<<< HEAD
-            <p class="article-summary">{{ featured_article.content|truncatewords:50 }}</p>
-=======
             <p class="article-summary">{{ featured_article.content|truncatewords:50|safe }}</p> <!-- Thêm |safe để giữ định dạng HTML -->
->>>>>>> 8450a53 (Tuan)
             <div class="article-meta">
                 <span class="author">Author: {{ featured_article.author.username }}</span>
                 <span class="date">{{ featured_article.created_at|date:"d-M-Y" }} ({{ featured_article.created_at|time:"H:i" }})</span>
@@ -55,11 +47,7 @@
                         {% endif %}
                     </div>
                     <div class="article-info">
-<<<<<<< HEAD
-                        <p class="article-summary">{{ article.content|truncatewords:20 }}</p>
-=======
                         <p class="article-summary">{{ article.content|truncatewords:20|safe }}</p> <!-- Thêm |safe để giữ định dạng HTML -->
->>>>>>> 8450a53 (Tuan)
                         <span class="author">Author: {{ article.author.username }}</span>
                         <span class="date">{{ article.created_at|date:"d-M-Y" }} ({{ article.created_at|time:"H:i" }})</span>
                     </div>
@@ -80,11 +68,7 @@
 {% block extra_css %}
 <style>
 .article-card h3 {
-<<<<<<< HEAD
-    font-size 20px;
-=======
     font-size: 20px;
->>>>>>> 8450a53 (Tuan)
     margin-bottom: 15px;
     color: #153060;
 }
@@ -93,8 +77,4 @@
 
 {% block scripts %}
 {{ block.super }}
-<<<<<<< HEAD
 {% endblock %}
-=======
-{% endblock %}
->>>>>>> 8450a53 (Tuan)

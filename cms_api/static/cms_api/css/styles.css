@@ -99,6 +99,7 @@ body {
 .user-name {
   font-size: 10px;
   text-align: center;
+  color: black;
 }
 .logout-btn {
   color: white;
@@ -598,7 +599,7 @@ textarea.form-control {
 
 /* User info for delete confirmation */
 .user-info {
-  background-color: #f9f9f9;
+  background-color: #333;
   border-radius: 4px;
   padding: 15px;
   margin: 15px 0;
