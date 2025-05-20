@@ -1,0 +1,92 @@
+{% extends 'cms_api/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - FLIC - DUE{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>{{ title }}</h1>
+    <div class="header-actions">
+        <a href="{% url 'user_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to User List
+        </a>
+    </div>
+</div>
+
+<div class="content-section">
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="message error">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-row">
+            <div class="form-group half">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="message error">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group half">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <div class="message error">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half">
+                <label for="role">Role</label>
+                <select name="role" id="role" class="form-control">
+                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                    <option value="editor" {% if user.role == 'editor' %}selected{% endif %}>Editor</option>
+                    <option value="author" {% if user.role == 'author' %}selected{% endif %}>Author</option>
+                    <option value="user" {% if user.role == 'user' %}selected{% endif %}>User</option>
+                </select>
+            </div>
+
+            <div class="form-group half">
+                <label for="is_active">Status</label>
+                <div style="margin-top: 10px;">
+                    <input type="checkbox" name="is_active" id="is_active" {% if user.is_active %}checked{% endif %}> Active
+                </div>
+            </div>
+        </div>
+
+        {% if not user %}
+        <div class="form-row">
+            <div class="form-group half">
+                <label for="{{ form.password1.id_for_label }}">Password</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                <div class="message error">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group half">
+                <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                <div class="message error">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

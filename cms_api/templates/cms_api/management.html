@@ -1,0 +1,155 @@
+{% extends 'cms_api/base.html' %}
+{% load static %}
+
+{% block title %}User Management - FLIC - DUE{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>User Management</h1>
+    <div class="header-actions">
+        <button class="btn btn-success" id="addUserBtn">
+            <i class="fas fa-plus"></i> Add User
+        </button>
+        <div class="search-container">
+            <input type="text" placeholder="Search users" id="searchInput" />
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>
+                    <div class="user-avatar-small"></div>
+                    {{ user.username }}
+                </td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role|title }}</td>
+                <td>
+                    <span class="status {% if user.is_active %}online{% else %}offline{% endif %}">
+                        <i class="fas fa-circle"></i>
+                        {% if user.is_active %}Active{% else %}Inactive{% endif %}
+                    </span>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-icon btn-view edit-user" data-id="{{ user.id }}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon btn-delete delete-user" data-id="{{ user.id }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No users found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal" id="addUserModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add New User</h2>
+            <button class="close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="addUserForm" method="post" action="#">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="new_username">Username</label>
+                    <input type="text" id="new_username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_email">Email</label>
+                    <input type="email" id="new_email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_password">Password</label>
+                    <input type="password" id="new_password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_role">Role</label>
+                    <select id="new_role" name="role" required>
+                        <option value="admin">Admin</option>
+                        <option value="editor">Editor</option>
+                        <option value="author">Author</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Add User</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add User Modal
+    const addUserBtn = document.getElementById('addUserBtn');
+    const addUserModal = document.getElementById('addUserModal');
+    const closeBtn = document.querySelector('.close-btn');
+    
+    if (addUserBtn) {
+        addUserBtn.addEventListener('click', function() {
+            addUserModal.classList.add('show');
+        });
+    }
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            addUserModal.classList.remove('show');
+        });
+    }
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === addUserModal) {
+            addUserModal.classList.remove('show');
+        }
+    });
+    
+    // Edit User functionality (placeholder)
+    const editButtons = document.querySelectorAll('.edit-user');
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-id');
+            alert(`Edit user with ID: ${userId} - This functionality will be implemented later`);
+        });
+    });
+    
+    // Delete User functionality (placeholder)
+    const deleteButtons = document.querySelectorAll('.delete-user');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this user?')) {
+                alert(`Delete user with ID: ${userId} - This functionality will be implemented later`);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,957 @@
+{% extends 'cms_api/base.html' %}
+{% load static %}
+
+{% block title %}Trang chủ - FLIC - DUE{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Home</h1>
+    <div class="header-actions">
+        <button class="btn btn-success" id="changeViewBtn">
+            Change View
+        </button>
+        <div class="search-container">
+            <input type="text" placeholder="Search by text, time or tags" id="searchInput" />
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="filters">
+    <div class="filter-group">
+<<<<<<< HEAD
+        <label>Date</label>
+        <div class="select-wrapper">
+            <select>
+                <option>All Dates</option>
+            </select>
+        </div>
+    </div>
+    <div class="filter-group">
+        <label>Category</label>
+        <div class="select-wrapper">
+            <select>
+                <option>All Types</option>
+                <option>Event</option>
+                <option>Knowledge</option>
+                <option>Course</option>
+=======
+        <label>Category</label>
+        <div class="select-wrapper">
+            <select id="categoryFilter">
+                <option value="all">All Types</option>
+                <option value="event">Event</option>
+                <option value="knowledge">Knowledge</option>
+                <option value="course">Course</option>
+                <option value="news">News</option>
+                <option value="vocabulary">Vocabulary</option>
+                <option value="grammar">Grammar</option>
+                <option value="listening">Listening</option>
+                <option value="speaking">Speaking</option>
+                <option value="reading">Reading</option>
+                <option value="writing">Writing</option>
+                <option value="exams">English Exams</option>
+                <option value="conversational">Conversational English</option>
+                <option value="business">Business English</option>
+                <option value="culture">English Culture</option>
+                <option value="resources">Free Resources</option>
+                <option value="community">Community</option>
+                <option value="ielts">IELTS</option>
+                <option value="toeic">TOEIC</option>
+                <option value="toefl">TOEFL</option>
+                <option value="cambridge">Cambridge</option>
+                <option value="pronunciation">Pronunciation</option>
+                <option value="idioms">Idioms</option>
+                <option value="phrasal_verbs">Phrasal Verbs</option>
+                <option value="podcasts">Podcasts</option>
+                <option value="videos">Videos</option>
+                <option value="apps">Apps</option>
+                <option value="books">Books</option>
+>>>>>>> 8450a53 (Tuan)
+            </select>
+        </div>
+    </div>
+    <div class="filter-group">
+        <label>Status</label>
+        <div class="select-wrapper">
+<<<<<<< HEAD
+            <select>
+                <option>All Status</option>
+                <option>Published</option>
+                <option>Pending</option>
+                <option>Planned</option>
+                <option>Rejected</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn btn-primary getdata">Get Data</button>
+=======
+            <select id="statusFilter">
+                <option value="all">All Status</option>
+                <option value="published">Published</option>
+                <option value="pending">Pending</option>
+                <option value="planned">Planned</option>
+                <option value="reject">Rejected</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn btn-primary getdata" id="filterBtn">Get Data</button>
+>>>>>>> 8450a53 (Tuan)
+</div>
+
+<div class="stats">
+    <div class="stat-card green">
+        <div class="stat-number">{{ post_stats.published }}</div>
+        <div class="stat-label">Published</div>
+        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+    </div>
+    <div class="stat-card orange">
+        <div class="stat-number">{{ post_stats.pending }}</div>
+        <div class="stat-label">Pending</div>
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+    </div>
+    <div class="stat-card blue">
+        <div class="stat-number">{{ post_stats.planned }}</div>
+        <div class="stat-label">Planned</div>
+        <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
+    </div>
+    <div class="stat-card red">
+        <div class="stat-number">{{ post_stats.reject }}</div>
+<<<<<<< HEAD
+        <div class="stat-label">Rejected</div>
+=======
+        <div class="stat-label">Hold/Reject</div>
+>>>>>>> 8450a53 (Tuan)
+        <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+    </div>
+</div>
+
+<!-- Table View (Default) -->
+<div class="table-container" id="tableView" style="display: {% if active_view == 'table' %}block{% else %}none{% endif %};">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Author</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in posts %}
+<<<<<<< HEAD
+            <tr class="article-row" data-id="{{ post.id }}">
+=======
+            <tr class="article-row" data-id="{{ post.id }}" data-category="{{ post.categories_name }}" data-status="{{ post.status }}">
+>>>>>>> 8450a53 (Tuan)
+                <td>{{ post.id }}</td>
+                <td>
+                    <div class="user-avatar-small"></div>
+                    {{ post.author.username }}
+                </td>
+                <td>
+                    {{ post.title }}
+                    <div class="small-text">
+                        Created: {{ post.created_at|date:"d-m-Y" }} | {{ post.created_at|time:"G:i" }}
+                    </div>
+                </td>
+                <td>{{ post.categories_name }}</td>
+                <td>
+                    <span class="status
+                        {% if post.status == 'published' %}published
+                        {% elif post.status == 'pending' %}pending
+                        {% elif post.status == 'draft' %}pending
+                        {% elif post.status == 'planned' %}planned
+                        {% elif post.status == 'reject' %}unpublished
+                        {% endif %}">
+                        {% if post.status == 'published' %}Published
+                        {% elif post.status == 'pending' %}Pending
+                        {% elif post.status == 'draft' %}Pending
+                        {% elif post.status == 'planned' %}Planned
+                        {% elif post.status == 'reject' %}Rejected
+                        {% endif %}
+                    </span>
+                </td>
+                <td>{{ post.created_at|date:"d-m-Y" }} | {{ post.created_at|time:"G:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No articles found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Grid View (Hidden by default) -->
+<div class="grid-view" id="gridView" style="display: {% if active_view == 'grid' %}block{% else %}none{% endif %};">
+    <div class="article-grid">
+        {% for post in posts %}
+<<<<<<< HEAD
+        <div class="article-card" data-id="{{ post.id }}">
+=======
+        <div class="article-card" data-id="{{ post.id }}" data-category="{{ post.categories_name }}" data-status="{{ post.status }}">
+>>>>>>> 8450a53 (Tuan)
+            <div class="article-image">
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                {% else %}
+<<<<<<< HEAD
+                <i class="fas fa-image"></i>
+                {% endif %}
+            </div>
+            <div class="article-content">
+                <h3>{{ post.title }}</h3>
+                <div class="article-meta">{{ post.created_at|date:"d-m-Y" }} {{ post.created_at|time:"G:i" }}</div>
+                <div class="article-tag {{ post.categories_name|lower }}">{{ post.categories_name }}</div>
+                <div class="status-badge
+                    {% if post.status == 'published' %}published
+                    {% elif post.status == 'pending' %}pending
+                    {% elif post.status == 'draft' %}pending
+                    {% elif post.status == 'planned' %}planned
+                    {% elif post.status == 'reject' %}unpublished
+                    {% endif %}">
+=======
+                <div class="placeholder-image">
+                    <i class="fas fa-image"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="article-content">
+                <h3 class="article-title">{{ post.title }}</h3>
+                <div class="article-category-tag {{ post.categories_name|lower }}">
+                    {{ post.categories_name|title }}
+                </div>
+                <div class="article-status-tag {{ post.status }}">
+>>>>>>> 8450a53 (Tuan)
+                    {% if post.status == 'published' %}Published
+                    {% elif post.status == 'pending' %}Pending
+                    {% elif post.status == 'draft' %}Pending
+                    {% elif post.status == 'planned' %}Planned
+                    {% elif post.status == 'reject' %}Rejected
+                    {% endif %}
+                </div>
+<<<<<<< HEAD
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-message">Không tìm thấy bài viết nào.</div>
+=======
+                <div class="article-date">{{ post.created_at|date:"d-M-Y H:i" }}</div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-message">No articles found.</div>
+>>>>>>> 8450a53 (Tuan)
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<!-- Search Modal -->
+<div class="modal" id="searchModal">
+    <div class="modal-content search-modal">
+        <div class="modal-header">
+            <h2>Search</h2>
+            <button class="close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="search-form">
+                <div class="form-group">
+                    <label>Keywords</label>
+                    <input type="text" placeholder="Enter search keywords" />
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <div class="select-wrapper">
+                        <select>
+                            <option>Event</option>
+                            <option>Knowledge</option>
+                            <option>Course</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Start Date</label>
+                        <input type="date" placeholder="Select date" />
+                    </div>
+                    <div class="form-group half">
+                        <label>End Date</label>
+                        <input type="date" placeholder="Select date" />
+                    </div>
+                </div>
+                <button class="btn btn-primary search-submit">Search</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<<<<<<< HEAD
+=======
+{% block extra_css %}
+<style>
+/* Grid View Styles */
+.article-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.article-card {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.article-image {
+    height: 180px;
+    background-color: #f5f5f5;
+    position: relative;
+    overflow: hidden;
+}
+
+.article-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholder-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #ccc;
+    font-size: 40px;
+}
+
+.article-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.article-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.article-category-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.article-status-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: white;
+    width:72px;
+}
+
+.article-status-tag.published {
+    background-color: #2ecc71; /* Green */
+}
+
+.article-status-tag.pending {
+    background-color: #f39c12; /* Yellow/Orange */
+}
+
+.article-status-tag.planned {
+    background-color: #3498db; /* Blue */
+}
+
+.article-status-tag.reject {
+    background-color: #e74c3c; /* Red */
+}
+
+/* Category Tag Colors */
+.article-category-tag.knowledge {
+    background-color: #3498db; /* Blue */
+}
+
+.article-category-tag.event {
+    background-color: #e74c3c; /* Red */
+}
+
+.article-category-tag.course {
+    background-color: #2ecc71; /* Green */
+}
+
+.article-category-tag.news {
+    background-color: #f39c12; /* Orange */
+}
+
+.article-category-tag.vocabulary {
+    background-color: #95a5a6; /* Gray */
+}
+
+.article-category-tag.grammar {
+    background-color: #9b59b6; /* Purple */
+}
+
+.article-category-tag.listening {
+    background-color: #1abc9c; /* Turquoise */
+}
+
+.article-category-tag.speaking {
+    background-color: #d35400; /* Dark Orange */
+}
+
+.article-category-tag.reading {
+    background-color: #27ae60; /* Dark Green */
+}
+
+.article-category-tag.writing {
+    background-color: #2980b9; /* Dark Blue */
+}
+
+.article-category-tag.exams {
+    background-color: #8e44ad; /* Dark Purple */
+}
+
+.article-category-tag.conversational {
+    background-color: #16a085; /* Dark Turquoise */
+}
+
+.article-category-tag.business {
+    background-color: #c0392b; /* Dark Red */
+}
+
+.article-category-tag.culture {
+    background-color: #f1c40f; /* Yellow */
+}
+
+.article-category-tag.resources {
+    background-color: #7f8c8d; /* Dark Gray */
+}
+
+.article-category-tag.community {
+    background-color: #34495e; /* Navy Blue */
+}
+
+.article-category-tag.ielts {
+    background-color: #3498db; /* Blue */
+}
+
+.article-category-tag.toeic {
+    background-color: #e67e22; /* Orange */
+}
+
+.article-category-tag.toefl {
+    background-color: #e74c3c; /* Red */
+}
+
+.article-category-tag.cambridge {
+    background-color: #2ecc71; /* Green */
+}
+
+.article-category-tag.pronunciation {
+    background-color: #9b59b6; /* Purple */
+}
+
+.article-category-tag.idioms {
+    background-color: #f39c12; /* Orange */
+}
+
+.article-category-tag.phrasal_verbs {
+    background-color: #16a085; /* Dark Turquoise */
+}
+
+.article-category-tag.podcasts {
+    background-color: #2980b9; /* Dark Blue */
+}
+
+.article-category-tag.videos {
+    background-color: #c0392b; /* Dark Red */
+}
+
+.article-category-tag.apps {
+    background-color: #8e44ad; /* Dark Purple */
+}
+
+.article-category-tag.books {
+    background-color: #27ae60; /* Dark Green */
+}
+
+.article-date {
+    font-size: 12px;
+    color: #777;
+    margin-top: auto;
+}
+
+.empty-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .article-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    .article-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Button active state */
+#changeViewBtn.active {
+    background-color: #1e7e34;
+}
+
+/* Filter styles */
+.filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: flex-end;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+.filter-group label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: 500;
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.select-wrapper::after {
+    content: '\f078';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #555;
+    font-size: 12px;
+}
+
+.getdata {
+    height: 38px;
+    min-width: 100px;
+    margin-left: 0;
+}
+
+/* Status styles in table view */
+.status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #f39c12;
+}
+
+.status.published {
+    background-color: #f5f5f5; /* Green */
+}
+
+.status.pending {
+    background-color: #f5f5f5; /* Yellow/Orange */
+}
+
+.status.planned {
+    background-color: #f5f5f5; /* Blue */
+}
+
+.status.unpublished {
+    background-color: #f5f5f5; /* Red */
+}
+
+/* Search container styles */
+.search-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+#searchInput {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 250px;
+}
+
+.search-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    padding: 8px 12px;
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    height: 100%;
+}
+
+.search-btn:hover {
+    background-color: #2980b9;
+}
+
+@media (max-width: 768px) {
+    .filters {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .getdata {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .search-container {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    #searchInput {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+>>>>>>> 8450a53 (Tuan)
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Thiết lập trình nghe sự kiện cho nút thay đổi chế độ xem
+    const changeViewBtn = document.getElementById("changeViewBtn");
+    const tableView = document.getElementById("tableView");
+    const gridView = document.getElementById("gridView");
+
+<<<<<<< HEAD
+    if (changeViewBtn && tableView && gridView) {
+=======
+    // Biến lưu trữ trạng thái lọc hiện tại
+    let currentCategoryFilter = 'all';
+    let currentStatusFilter = 'all';
+    let currentSearchQuery = '';
+
+    if (changeViewBtn && tableView && gridView) {
+        // Kiểm tra trạng thái hiện tại và cập nhật nút tương ứng
+        if (gridView.style.display !== "none") {
+            changeViewBtn.classList.add("active");
+        }
+
+>>>>>>> 8450a53 (Tuan)
+        changeViewBtn.addEventListener("click", () => {
+            if (tableView.style.display === "none") {
+                tableView.style.display = "block";
+                gridView.style.display = "none";
+                changeViewBtn.classList.remove("active");
+<<<<<<< HEAD
+=======
+                // Lưu trạng thái vào localStorage
+                localStorage.setItem("viewMode", "table");
+
+                // Áp dụng lại bộ lọc hiện tại khi chuyển đổi chế độ xem
+                if (currentCategoryFilter !== 'all' || currentStatusFilter !== 'all' || currentSearchQuery !== '') {
+                    filterArticles(currentCategoryFilter, currentStatusFilter, currentSearchQuery);
+                }
+>>>>>>> 8450a53 (Tuan)
+            } else {
+                tableView.style.display = "none";
+                gridView.style.display = "block";
+                changeViewBtn.classList.add("active");
+<<<<<<< HEAD
+            }
+        });
+=======
+                // Lưu trạng thái vào localStorage
+                localStorage.setItem("viewMode", "grid");
+
+                // Áp dụng lại bộ lọc hiện tại khi chuyển đổi chế độ xem
+                if (currentCategoryFilter !== 'all' || currentStatusFilter !== 'all' || currentSearchQuery !== '') {
+                    filterArticles(currentCategoryFilter, currentStatusFilter, currentSearchQuery);
+                }
+            }
+        });
+
+        // Khôi phục trạng thái xem từ localStorage khi tải trang
+        const savedViewMode = localStorage.getItem("viewMode");
+        if (savedViewMode === "grid") {
+            tableView.style.display = "none";
+            gridView.style.display = "block";
+            changeViewBtn.classList.add("active");
+        } else {
+            tableView.style.display = "block";
+            gridView.style.display = "none";
+            changeViewBtn.classList.remove("active");
+        }
+>>>>>>> 8450a53 (Tuan)
+    }
+
+    // Thêm sự kiện click cho các hàng bài viết trong chế độ xem bảng
+    const articleRows = document.querySelectorAll(".article-row");
+    articleRows.forEach((row) => {
+        row.addEventListener("click", function () {
+            const articleId = this.getAttribute("data-id");
+            window.location.href = `/admin-dashboard/article/${articleId}/`;
+        });
+    });
+
+    // Thêm sự kiện click cho các thẻ bài viết trong chế độ xem lưới
+    const articleCards = document.querySelectorAll(".article-card");
+    articleCards.forEach((card) => {
+        card.addEventListener("click", function () {
+            const articleId = this.getAttribute("data-id");
+            window.location.href = `/admin-dashboard/article/${articleId}/`;
+        });
+    });
+<<<<<<< HEAD
+=======
+
+    // Xử lý lọc bài viết
+    const filterBtn = document.getElementById("filterBtn");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const statusFilter = document.getElementById("statusFilter");
+
+    if (filterBtn) {
+        filterBtn.addEventListener("click", function() {
+            currentCategoryFilter = categoryFilter ? categoryFilter.value : 'all';
+            currentStatusFilter = statusFilter ? statusFilter.value : 'all';
+
+            // Lọc các bài viết dựa trên các giá trị đã chọn
+            filterArticles(currentCategoryFilter, currentStatusFilter, currentSearchQuery);
+        });
+    }
+
+    // Xử lý tìm kiếm
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+
+    if (searchBtn && searchInput) {
+        searchBtn.addEventListener("click", function() {
+            currentSearchQuery = searchInput.value.trim().toLowerCase();
+            filterArticles(currentCategoryFilter, currentStatusFilter, currentSearchQuery);
+        });
+
+        // Thêm sự kiện Enter cho ô tìm kiếm
+        searchInput.addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                currentSearchQuery = searchInput.value.trim().toLowerCase();
+                filterArticles(currentCategoryFilter, currentStatusFilter, currentSearchQuery);
+            }
+        });
+    }
+
+    function filterArticles(category, status, searchQuery = '') {
+        // Lấy tất cả các bài viết (cả trong bảng và lưới)
+        const tableRows = document.querySelectorAll(".article-row");
+        const gridCards = document.querySelectorAll(".article-card");
+        let hasVisibleArticles = false;
+
+        // Lọc các bài viết trong bảng
+        tableRows.forEach(row => {
+            let showArticle = true;
+
+            // Lọc theo danh mục
+            if (category !== 'all') {
+                const articleCategory = row.getAttribute('data-category').toLowerCase();
+                if (articleCategory !== category.toLowerCase()) {
+                    showArticle = false;
+                }
+            }
+
+            // Lọc theo trạng thái
+            if (status !== 'all') {
+                const articleStatus = row.getAttribute('data-status').toLowerCase();
+                if (articleStatus !== status.toLowerCase()) {
+                    showArticle = false;
+                }
+            }
+
+            // Lọc theo từ khóa tìm kiếm
+            if (searchQuery !== '') {
+                const title = row.cells[2].textContent.trim().toLowerCase();
+                const author = row.cells[1].textContent.trim().toLowerCase();
+                const category = row.cells[3].textContent.trim().toLowerCase();
+
+                if (!title.includes(searchQuery) && !author.includes(searchQuery) && !category.includes(searchQuery)) {
+                    showArticle = false;
+                }
+            }
+
+            // Hiển thị hoặc ẩn bài viết
+            row.style.display = showArticle ? "" : "none";
+
+            if (showArticle) {
+                hasVisibleArticles = true;
+            }
+        });
+
+        // Lọc các bài viết trong lưới
+        gridCards.forEach(card => {
+            let showArticle = true;
+
+            // Lọc theo danh mục
+            if (category !== 'all') {
+                const articleCategory = card.getAttribute('data-category').toLowerCase();
+                if (articleCategory !== category.toLowerCase()) {
+                    showArticle = false;
+                }
+            }
+
+            // Lọc theo trạng thái
+            if (status !== 'all') {
+                const articleStatus = card.getAttribute('data-status').toLowerCase();
+                if (articleStatus !== status.toLowerCase()) {
+                    showArticle = false;
+                }
+            }
+
+            // Lọc theo từ khóa tìm kiếm
+            if (searchQuery !== '') {
+                const title = card.querySelector('.article-title').textContent.trim().toLowerCase();
+                const category = card.querySelector('.article-category-tag').textContent.trim().toLowerCase();
+
+                if (!title.includes(searchQuery) && !category.includes(searchQuery)) {
+                    showArticle = false;
+                }
+            }
+
+            // Hiển thị hoặc ẩn bài viết
+            card.style.display = showArticle ? "" : "none";
+
+            if (showArticle) {
+                hasVisibleArticles = true;
+            }
+        });
+
+        // Hiển thị thông báo nếu không có bài viết nào
+        const tableEmptyRow = document.querySelector(".data-table tbody tr:last-child");
+        const gridEmptyMessage = document.querySelector(".empty-message");
+
+        if (tableEmptyRow && tableRows.length === 1) {
+            tableEmptyRow.style.display = hasVisibleArticles ? "none" : "";
+        }
+
+        if (gridEmptyMessage) {
+            gridEmptyMessage.style.display = hasVisibleArticles ? "none" : "block";
+        }
+    }
+
+    // Khôi phục trạng thái lọc từ localStorage nếu có
+    const savedCategoryFilter = localStorage.getItem("categoryFilter");
+    const savedStatusFilter = localStorage.getItem("statusFilter");
+    const savedSearchQuery = localStorage.getItem("searchQuery");
+
+    if (savedCategoryFilter && categoryFilter) {
+        categoryFilter.value = savedCategoryFilter;
+        currentCategoryFilter = savedCategoryFilter;
+    }
+
+    if (savedStatusFilter && statusFilter) {
+        statusFilter.value = savedStatusFilter;
+        currentStatusFilter = savedStatusFilter;
+    }
+
+    if (savedSearchQuery && searchInput) {
+        searchInput.value = savedSearchQuery;
+        currentSearchQuery = savedSearchQuery;
+    }
+
+    // Áp dụng lọc nếu có giá trị đã lưu
+    if ((savedCategoryFilter && savedCategoryFilter !== 'all') ||
+        (savedStatusFilter && savedStatusFilter !== 'all') ||
+        (savedSearchQuery && savedSearchQuery !== '')) {
+        filterArticles(currentCategoryFilter, currentStatusFilter, currentSearchQuery);
+    }
+
+    // Lưu trạng thái lọc vào localStorage khi thay đổi
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', function() {
+            localStorage.setItem("categoryFilter", this.value);
+        });
+    }
+
+    if (statusFilter) {
+        statusFilter.addEventListener('change', function() {
+            localStorage.setItem("statusFilter", this.value);
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('change', function() {
+            localStorage.setItem("searchQuery", this.value);
+        });
+    }
+>>>>>>> 8450a53 (Tuan)
+});
+</script>
+{% endblock %}

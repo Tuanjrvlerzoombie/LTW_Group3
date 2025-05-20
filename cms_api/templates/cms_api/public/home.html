@@ -1,0 +1,127 @@
+{% extends 'cms_api/public/base.html' %}
+{% load static %}
+
+{% block title %}FLIC - DUE | Home{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<form class="search-form" method="get" action="{% url 'public_home' %}">
+  <div class="filters-container">
+    <div class="filter-group">
+      <label>Start Date</label>
+      <div class="flatpickr date-input">
+          <input type="text" id="start_day" name="start_day" class="date-picker" value="{{ start_day }}" readonly />
+          <i class="fas fa-calendar"></i>
+        </div>
+    </div>
+    <div class="filter-group">
+      <label>End Date</label>
+      <div class="flatpickr date-input">
+          <input type="text" id="end_day" name="end_day" class="date-picker" value="{{ end_day }}" readonly />
+          <i class="fas fa-calendar"></i>
+        </div>
+    </div>
+    <div class="filter-group">
+      <label>Category</label>
+      <div class="select-wrapper">
+        <select id="category" name="category">
+          <option value="all categories" {% if selected_category == 'all categories' %}selected{% endif %}>All Categories</option>
+          <option value="event" {% if selected_category == 'event' %}selected{% endif %}>Event</option>
+          <option value="course" {% if selected_category == 'course' %}selected{% endif %}>Course</option>
+          <option value="knowledge" {% if selected_category == 'knowledge' %}selected{% endif %}>Knowledge</option>
+          <option value="news" {% if selected_category == 'news' %}selected{% endif %}>News</option>
+        </select>
+      </div>
+    </div>
+    <input type="hidden" name="form_submitted" value="1" />
+    <button type="submit" class="btn btn-primary search-btn">Get Data</button>
+  </div>
+</form>
+
+<!-- Messages -->
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-info">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<!-- Featured + Articles -->
+{% if featured_article or articles|length > 0 %}
+
+  <!-- Featured Article -->
+  {% if featured_article %}
+  <div class="featured-article" data-category="{{ featured_article.categories_name|lower }}" onclick="window.location.href='{% url 'public_article_detail' featured_article.id %}'" style="cursor: pointer;">
+      <div class="featured-image">
+          {% if featured_article.image %}
+              <img src="{{ featured_article.image.url }}" alt="{{ featured_article.title }}" />
+          {% else %}
+              <img src="{% static 'cms_api/img/it-certificate.jpg' %}" alt="IT Certificate" />
+          {% endif %}
+      </div>
+      <div class="featured-content">
+          <h2>{{ featured_article.title }}</h2>
+<<<<<<< HEAD
+          <p class="article-summary">{{ featured_article.content|truncatewords:50 }}</p>
+=======
+          <p class="article-summary">{{ featured_article.content|truncatewords:50|safe }}</p> <!-- Thêm |safe để giữ định dạng HTML -->
+>>>>>>> 8450a53 (Tuan)
+          <div class="article-meta">
+              <span class="author">Author: {{ featured_article.author.username }}</span>
+              <span class="date">{{ featured_article.created_at|date:"d-M-Y" }} ({{ featured_article.created_at|time:"H:i" }})</span>
+          </div>
+      </div>
+  </div>
+  {% endif %}
+
+  <!-- Articles -->
+  <div class="article-ctn">
+      {% for article in articles %}
+      <div class="article-section">
+          <h3>{{ article.title }}</h3>
+          <div class="article-grid">
+              <div class="article-card" data-category="{{ article.categories_name|lower }}" onclick="window.location.href='{% url 'public_article_detail' article.id %}'">
+                  <div class="article-image">
+                      {% if article.image %}
+                          <img src="{{ article.image.url }}" alt="{{ article.title }}" />
+                      {% else %}
+                          <img src="{% static 'cms_api/img/it-certificate.jpg' %}" alt="{{ article.title }}" />
+                      {% endif %}
+                  </div>
+                  <div class="article-info">
+<<<<<<< HEAD
+                      <p class="article-summary">{{ article.content|truncatewords:20 }}</p>
+=======
+                      <p class="article-summary">{{ article.content|truncatewords:20|safe }}</p> <!-- Thêm |safe để giữ định dạng HTML -->
+>>>>>>> 8450a53 (Tuan)
+                      <span class="author">Author: {{ article.author.username }}</span>
+                      <span class="date">{{ article.created_at|date:"d-M-Y" }} ({{ article.created_at|time:"H:i" }})</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+      {% empty %}
+      <div class="empty-message no-articles">
+          <p>No published articles found.</p>
+      </div>
+      {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-message no-articles">
+      <p>No matching articles found.</p>
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Reset filter values if no form submitted
+        if (!window.location.search.includes('form_submitted=1')) {
+            document.getElementById('start_day').value = '';
+            document.getElementById('end_day').value = '';
+            document.getElementById('category').value = 'all categories';
+        }
+    });
+</script>
+{% endblock %}

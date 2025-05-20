@@ -1,0 +1,382 @@
+{% extends 'cms_api/base.html' %}
+{% load static %}
+
+{% block title %}Profile - FLIC - DUE{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url('https://i.pinimg.com/736x/5a/ab/fe/5aabfed022882ad4a78e47a377d9c984.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    .main-content {
+        background-color: transparent;
+        padding: 20px;
+    }
+
+    .profile-container {
+        display: flex;
+        gap: 20px;
+    }
+
+    .profile-card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        flex: 0 0 350px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-content {
+        background-color: white;
+        border-radius: 8px;
+        padding: 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        flex: 1;
+    }
+
+    .avatar-wrapper {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+        background-color: #ccc;
+        font-size: 36px;
+        color: white;
+        text-align: center;
+        line-height: 120px;
+    }
+
+    .upload-icon {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background-color: #2c3e50;
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s ease;
+    }
+
+    .profile-name {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .profile-role {
+        font-size: 14px;
+        color: #7f8c8d;
+        margin-bottom: 25px;
+    }
+
+    .profile-stats {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+
+    .stat {
+        text-align: center;
+        flex: 1;
+    }
+
+    .stat-number {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #7f8c8d;
+    }
+
+    .profile-info {
+        width: 100%;
+        border-top: 1px solid #ecf0f1;
+        padding-top: 20px;
+    }
+
+    .profile-info h3 {
+        font-size: 16px;
+        margin-bottom: 15px;
+        color: #2c3e50;
+    }
+
+    .info-row {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .info-label {
+        width: 100px;
+        color: #7f8c8d;
+        font-size: 14px;
+    }
+
+    .info-value {
+        flex: 1;
+        font-size: 14px;
+    }
+
+    .profile-tabs {
+        display: flex;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .tab-btn {
+        padding: 15px 20px;
+        background: none;
+        border: none;
+        font-size: 14px;
+        font-weight: 500;
+        color: #7f8c8d;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .tab-btn.active {
+        color: #2c3e50;
+    }
+
+    .tab-btn.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #2c3e50;
+    }
+
+    .tab-content {
+        padding: 30px;
+    }
+
+    .tab-description {
+        color: #7f8c8d;
+        margin-bottom: 25px;
+    }
+
+    .settings-form .form-group {
+        margin-bottom: 20px;
+    }
+
+    .settings-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .settings-form input,
+    .settings-form textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .settings-form textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .settings-form .btn {
+        margin-top: 10px;
+    }
+
+    .header h1 {
+        margin-bottom: 20px;
+        color: #2c3e50;
+    }
+</style>
+
+<div class="header">
+    <h1>User Profile</h1>
+</div>
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="avatar-wrapper">
+            {% if user.avatar %}
+                <img class="profile-avatar" id="avatarPreview" src="{{ user.avatar.url }}" alt="Avatar">
+            {% else %}
+                <div class="profile-avatar" id="avatarPreview">{{ user.username|first|upper }}</div>
+            {% endif %}
+            <label for="avatarInput" class="upload-icon">+</label>
+            <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;" form="accountForm">
+        </div>
+
+        <div class="profile-name">{{ user.username }}</div>
+        <div class="profile-role">{{ user.role|title }}</div>
+
+        <div class="profile-stats">
+            <div class="stat">
+                <div class="stat-number">{{ user_articles.count|default:"0" }}</div>
+                <div class="stat-label">Articles</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">{{ user_articles.published.count|default:"0" }}</div>
+                <div class="stat-label">Published</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">{{ user_articles.pending.count|default:"0" }}</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+
+        <div class="profile-info">
+            <h3>Personal Information</h3>
+            <div class="info-row">
+                <div class="info-label">Email</div>
+                <div class="info-value">{{ user.email }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Phone</div>
+                <div class="info-value">{{ user.phone_number|default:"Not provided" }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Location</div>
+                <div class="info-value">{{ user.location|default:"Not provided" }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Summary</div>
+                <div class="info-value">{{ user.profile_summary|default:"Not provided" }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Joined</div>
+                <div class="info-value">{{ user.date_joined|date:"d M Y" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-content">
+        <div class="profile-tabs">
+            <button class="tab-btn active" data-tab="account">Account Settings</button>
+            <button class="tab-btn" data-tab="password">Change Password</button>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="tab-content" id="account-tab">
+            <p class="tab-description">Manage your account settings</p>
+
+            <form class="settings-form" method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data" id="accountForm">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="account">
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" name="phone_number" value="{{ user.phone_number|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" value="{{ user.location|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="profile_summary">Profile Summary</label>
+                    <textarea id="profile_summary" name="profile_summary" rows="3">{{ user.profile_summary|default:'' }}</textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+
+        <div class="tab-content" id="password-tab" style="display: none;">
+            <p class="tab-description">Change your password</p>
+
+            <form class="settings-form" method="post" action="{% url 'update_profile' %}">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="password">
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
+                    <input type="password" id="current_password" name="current_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <input type="password" id="new_password" name="new_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm New Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            tabContents.forEach(content => content.style.display = 'none');
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(`${tabId}-tab`).style.display = 'block';
+        });
+    });
+
+    // Avatar preview on file select
+    const input = document.getElementById("avatarInput");
+    const preview = document.getElementById("avatarPreview");
+
+    input.addEventListener("change", function() {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (preview.tagName.toLowerCase() === 'img') {
+                    preview.src = e.target.result;
+                } else {
+                    preview.style.backgroundImage = `url(${e.target.result})`;
+                    preview.textContent = '';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+});
+</script>
+{% endblock %}

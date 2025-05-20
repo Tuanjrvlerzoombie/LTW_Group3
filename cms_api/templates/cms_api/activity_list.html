@@ -1,0 +1,178 @@
+{% extends 'cms_api/base.html' %}
+{% load static %}
+
+{% block title %}Activity Logs - FLIC - DUE{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Activity Logs</h1>
+    <div class="header-actions">
+        <a href="{% url 'activity_management' %}" class="btn btn-primary">
+            <i class="fas fa-users"></i> Account Management
+        </a>
+        <div class="search-container">
+            <input type="text" placeholder="Search activities" id="searchInput" />
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="filters">
+    <div class="filter-group">
+        <label>Filter by User</label>
+        <div class="select-wrapper">
+            <select id="userFilter" class="form-control">
+                <option value="">All Users</option>
+                {% for user in users %}
+                <option value="{{ user.id }}" {% if request.GET.user_id == user.id|stringformat:"i" %}selected{% endif %}>
+                    {{ user.username }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="filter-group">
+        <label>Filter by Action</label>
+        <div class="select-wrapper">
+            <select id="actionFilter" class="form-control">
+                <option value="">All Actions</option>
+                {% for action_value, action_name in action_choices %}
+                <option value="{{ action_value }}" {% if request.GET.action == action_value %}selected{% endif %}>
+                    {{ action_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Description</th>
+                <th>IP Address</th>
+                <th>Timestamp</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for activity in page_obj %}
+            <tr>
+                <td>{{ activity.id }}</td>
+                <td>{{ activity.user.username }}</td>
+                <td>
+                    <span class="status
+                        {% if activity.action == 'login' or activity.action == 'create_post' or activity.action == 'publish_post' %}published
+                        {% elif activity.action == 'logout' or activity.action == 'delete_post' or activity.action == 'reject_post' %}unpublished
+                        {% else %}pending{% endif %}">
+                        {{ activity.get_action_display }}
+                    </span>
+                </td>
+                <td>{{ activity.description|default:"-" }}</td>
+                <td>{{ activity.ip_address|default:"-" }}</td>
+                <td>{{ activity.timestamp|date:"d M Y, H:i:s" }}</td>
+                <td>
+                    <form method="post" action="{% url 'activity_delete' activity.id %}" onsubmit="return confirm('Are you sure you want to delete this activity log?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-icon btn-delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No activity logs found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="pagination" style="margin-top: 20px; text-align: center;">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if request.GET.user_id %}&user_id={{ request.GET.user_id }}{% endif %}{% if request.GET.action %}&action={{ request.GET.action }}{% endif %}">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.user_id %}&user_id={{ request.GET.user_id }}{% endif %}{% if request.GET.action %}&action={{ request.GET.action }}{% endif %}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.user_id %}&user_id={{ request.GET.user_id }}{% endif %}{% if request.GET.action %}&action={{ request.GET.action }}{% endif %}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.user_id %}&user_id={{ request.GET.user_id }}{% endif %}{% if request.GET.action %}&action={{ request.GET.action }}{% endif %}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const userFilter = document.getElementById('userFilter');
+    const actionFilter = document.getElementById('actionFilter');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    // Apply filters when changed
+    if (userFilter) {
+        userFilter.addEventListener('change', applyFilters);
+    }
+
+    if (actionFilter) {
+        actionFilter.addEventListener('change', applyFilters);
+    }
+
+    // Search functionality
+    if (searchBtn && searchInput) {
+        searchBtn.addEventListener('click', function() {
+            filterTable(searchInput.value.toLowerCase());
+        });
+
+        searchInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                filterTable(this.value.toLowerCase());
+            }
+        });
+    }
+
+    function applyFilters() {
+        const userId = userFilter ? userFilter.value : '';
+        const action = actionFilter ? actionFilter.value : '';
+
+        let url = window.location.pathname + '?';
+        if (userId) url += 'user_id=' + userId + '&';
+        if (action) url += 'action=' + action + '&';
+
+        // Remove trailing & if exists
+        if (url.endsWith('&')) {
+            url = url.slice(0, -1);
+        }
+
+        window.location.href = url;
+    }
+
+    function filterTable(query) {
+        const rows = document.querySelectorAll('.data-table tbody tr');
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

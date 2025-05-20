@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FLIC - DUE{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'cms_api/css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-square">
+
+                </div>
+                <div class="logo-text">DUE</div>
+            </div>
+            <nav class="nav-menu">
+                <a href="{% url 'home' %}" class="nav-item {% if request.path == '/admin-dashboard/' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span>Articles</span>
+                </a>
+
+                {% if request.user.role == 'author' or request.user.role == 'admin' %}
+                <a href="{% url 'add_article_author' %}" class="nav-item {% if request.path == '/admin-dashboard/add-article-author/' %}active{% endif %}">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Add Article</span>
+                </a>
+                {% endif %}
+
+                {% if request.user.role == 'admin' %}
+                <a href="{% url 'management' %}" class="nav-item {% if request.path == '/admin-dashboard/management/' %}active{% endif %}">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Management</span>
+                </a>
+                {% endif %}
+
+                <a href="{% url 'profile' %}" class="nav-item {% if request.path == '/admin-dashboard/profile/' %}active{% endif %}">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
+            <div class="user-info">
+                <a href="{% url 'logout' %}" class="logout-btn">
+                    <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+                    <div class="user-name">Logout</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    {% block modals %}{% endblock %}
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

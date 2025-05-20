@@ -1,0 +1,362 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}FLIC - DUE{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'cms_api/css/public_style.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            border-bottom: 1px solid #e5e7eb;
+            background-color: white;
+            position: relative;
+        }
+
+        .navbar-container {
+            max-width: 1536px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .navbar-left::-webkit-scrollbar {
+            display: none;
+        }
+
+        .navbar-left {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .home-icon {
+            color: #4b5563;
+            transition: color 0.2s;
+        }
+
+        .home-icon:hover {
+            color: #111827;
+        }
+
+        /* Desktop Navigation */
+        .desktop-nav {
+            display: none;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .desktop-nav {
+                display: flex;
+            }
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: flex;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-nav {
+                display: none;
+            }
+        }
+
+        /* Navigation Links */
+        .nav-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #4b5563;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #111827;
+        }
+
+        /* Menu Button */
+        .menu-button {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            color: #4b5563;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-button:hover {
+            color: #111827;
+            background-color: #f3f4f6;
+        }
+
+        /* Mobile Dropdown Menu */
+        .mobile-dropdown {
+            display: none;
+            padding: 0.5rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .mobile-dropdown.active {
+            display: block;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-dropdown {
+                display: none !important;
+            }
+        }
+
+        .dropdown-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.25rem;
+        }
+
+        /* Desktop Dropdown Menu */
+        .desktop-dropdown {
+            display: none;
+            position: absolute;
+            top: 56px;
+            left: 0;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-top: 1px solid #e5e7eb;
+            z-index: 50;
+        }
+
+        .desktop-dropdown.active {
+            display: block;
+        }
+
+        @media (max-width: 767px) {
+            .desktop-dropdown {
+                display: none !important;
+            }
+        }
+
+        .desktop-dropdown-container {
+            max-width: 1536px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .desktop-dropdown-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .desktop-dropdown-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        /* Dropdown Links */
+        .dropdown-link {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+
+        .dropdown-link:hover {
+            color: #111827;
+            background-color: #f3f4f6;
+        }
+
+        .flatpickr-calendar {
+            z-index: 1000 !important;
+        }
+        .flatpickr-date-input {
+            position: relative;
+        }
+        .fas.fa-calendar {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="public-container">
+        <!-- Header -->
+        <header class="public-header">
+            <div class="logo-container">
+                <img src="{% static 'cms_api/img/logo.png' %}" alt="DUE Logo" class="logo-image" />
+                <span class="logo-text">DUE</span>
+            </div>
+            <div class="header-actions">
+                <form class="search-form" method="get" action="{% url 'search' %}">
+
+                    <div class="search-container">
+                        <input type="text" name="search" class="search-input" placeholder="Search by Text, Time or Category" />
+                        <button type="submit" class="search-btn header-search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                </form>
+                <a href="{% url 'login' %}" class="login-btn">
+                    <i class="fas fa-user"></i>
+                    Login
+                </a>
+            </div>
+        </header>
+
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="navbar-container">
+                <div class="navbar-left">
+                    <a href="/" class="home-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </a>
+
+                    <!-- Desktop Navigation -->
+                    <div class="desktop-nav">
+                        <a href="{% url 'vocabulary' %}" class="nav-link">Vocabulary</a>
+                        <a href="{% url 'grammar' %}" class="nav-link">Grammar</a>
+                        <a href="{% url 'listening' %}" class="nav-link">Listening</a>
+                        <a href="{% url 'speaking' %}" class="nav-link">Speaking</a>
+                        <a href="{% url 'reading' %}" class="nav-link">Reading</a>
+                        <a href="{% url 'writing' %}" class="nav-link">Writing</a>
+                        <a href="{% url 'exams' %}" class="nav-link">English Exams</a>
+                        <a href="{% url 'conversational' %}" class="nav-link">Conversational English</a>
+                        <a href="{% url 'business' %}" class="nav-link">Business English</a>
+                        <a href="{% url 'culture' %}" class="nav-link">English Culture</a>
+                        <a href="{% url 'resources' %}" class="nav-link">Free Resources</a>
+                        <a href="{% url 'community' %}" class="nav-link">Community</a>
+                    </div>
+
+                    <!-- Mobile Navigation -->
+                    <div class="mobile-nav">
+                        <a href="{% url 'vocabulary' %}" class="nav-link">Vocabulary</a>
+                        <a href="{% url 'grammar' %}" class="nav-link">Grammar</a>
+                        <a href="{% url 'listening' %}" class="nav-link">Listening</a>
+                        <a href="{% url 'speaking' %}" class="nav-link">Speaking</a>
+                        <a href="{% url 'exams' %}" class="nav-link">Exams</a>
+                    </div>
+                </div>
+
+                <button id="menu-toggle" class="menu-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="4" x2="20" y1="12" y2="12"></line>
+                        <line x1="4" x2="20" y1="6" y2="6"></line>
+                        <line x1="4" x2="20" y1="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Dropdown Menu -->
+            <div id="mobile-dropdown" class="mobile-dropdown">
+                <div class="dropdown-grid">
+                    <a href="{% url 'reading' %}" class="dropdown-link">Reading</a>
+                    <a href="{% url 'writing' %}" class="dropdown-link">Writing</a>
+                    <a href="{% url 'conversational' %}" class="dropdown-link">Conversational English</a>
+                    <a href="{% url 'business' %}" class="dropdown-link">Business English</a>
+                    <a href="{% url 'culture' %}" class="dropdown-link">English Culture</a>
+                    <a href="{% url 'resources' %}" class="dropdown-link">Free Resources</a>
+                    <a href="{% url 'community' %}" class="dropdown-link">Community</a>
+                    <a href="{% url 'ielts' %}" class="dropdown-link">IELTS</a>
+                    <a href="{% url 'toeic' %}" class="dropdown-link">TOEIC</a>
+                    <a href="{% url 'toefl' %}" class="dropdown-link">TOEFL</a>
+                    <a href="{% url 'cambridge' %}" class="dropdown-link">Cambridge</a>
+                </div>
+            </div>
+
+            <!-- Desktop Dropdown Menu -->
+            <div id="desktop-dropdown" class="desktop-dropdown">
+                <div class="desktop-dropdown-container">
+                    <div class="desktop-dropdown-grid">
+                        <a href="{% url 'ielts' %}" class="dropdown-link">IELTS</a>
+                        <a href="{% url 'toeic' %}" class="dropdown-link">TOEIC</a>
+                        <a href="{% url 'toefl' %}" class="dropdown-link">TOEFL</a>
+                        <a href="{% url 'cambridge' %}" class="dropdown-link">Cambridge</a>
+                        <a href="{% url 'pronunciation' %}" class="dropdown-link">Pronunciation</a>
+                        <a href="{% url 'idioms' %}" class="dropdown-link">Idioms</a>
+                        <a href="{% url 'phrasal_verbs' %}" class="dropdown-link">Phrasal Verbs</a>
+                        <a href="{% url 'podcasts' %}" class="dropdown-link">Podcasts</a>
+                        <a href="{% url 'videos' %}" class="dropdown-link">Videos</a>
+                        <a href="{% url 'apps' %}" class="dropdown-link">Apps</a>
+                        <a href="{% url 'books' %}" class="dropdown-link">Books</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="public-main">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="public-footer">
+            <p>© {% now "Y" %} FLIC - DUE. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript Dependencies -->
+    {% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="{% static 'cms_api/js/article.js' %}"></script>
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileDropdown = document.getElementById('mobile-dropdown');
+        const desktopDropdown = document.getElementById('desktop-dropdown');
+
+        menuToggle.addEventListener('click', function() {
+            mobileDropdown.classList.toggle('active');
+            desktopDropdown.classList.toggle('active');
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

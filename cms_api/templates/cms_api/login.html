@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FLIC - DUE | Login</title>
+    <link rel="stylesheet" href="{% static 'cms_api/css/public_style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      .back-button {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #153060;
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .back-button:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body class="login-page"
+      style="background-image: url('https://hoangphuconline.vn/media/magefan_blog/2021/12/hinh-nen-dep-96-scaled.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <div class="login-container">
+      <!-- Thêm nút back -->
+      <a href="{% url 'public_home' %}" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </a>
+
+      <div class="login-form-container">
+        <div class="login-logo">
+          <img src="{% static '/img/logo.png' %}" alt="DUE Logo" class="logo-image" />
+          <h1>DUE</h1>
+        </div>
+
+        <h2>Login</h2>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form class="login-form" action="{% url 'login' %}" method="POST">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="username">User Name</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="hannah.green@test.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password123@"
+              required
+            />
+          </div>
+
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="remember" name="remember" checked />
+            <label for="remember">Remember me on this computer</label>
+          </div>
+
+          <button type="submit" class="login-button">Log in</button>
+        </form>
+      </div>
+
+
+    </div>
+  </body>
+</html>

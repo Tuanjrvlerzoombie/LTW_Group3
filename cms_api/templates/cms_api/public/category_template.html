@@ -1,0 +1,100 @@
+{% extends 'cms_api/public/base.html' %}
+{% load static %}
+
+{% block title %}FLIC - DUE | {{ category_name }}{% endblock %}
+
+{% block content %}
+
+<<<<<<< HEAD
+
+=======
+>>>>>>> 8450a53 (Tuan)
+<!-- Tiêu đề danh mục -->
+<h1 style="margin: 1rem 0;">{{ category_name }}</h1>
+
+<!-- Nếu có bài viết -->
+{% if featured_article or articles|length > 0 %}
+
+    <!-- Bài viết nổi bật đầu tiên -->
+    {% if featured_article %}
+    <div class="featured-article" data-category="{{ featured_article.categories_name|lower }}" onclick="window.location.href='{% url 'public_article_detail' featured_article.id %}'" style="cursor: pointer;">
+        <div class="featured-image">
+            {% if featured_article.image %}
+                <img src="{{ featured_article.image.url }}" alt="{{ featured_article.title }}" />
+            {% else %}
+                <img src="{% static 'cms_api/img/it-certificate.jpg' %}" alt="Default Image" />
+            {% endif %}
+        </div>
+        <div class="featured-content">
+            <h2>{{ featured_article.title }}</h2>
+<<<<<<< HEAD
+            <p class="article-summary">{{ featured_article.content|truncatewords:50 }}</p>
+=======
+            <p class="article-summary">{{ featured_article.content|truncatewords:50|safe }}</p> <!-- Thêm |safe để giữ định dạng HTML -->
+>>>>>>> 8450a53 (Tuan)
+            <div class="article-meta">
+                <span class="author">Author: {{ featured_article.author.username }}</span>
+                <span class="date">{{ featured_article.created_at|date:"d-M-Y" }} ({{ featured_article.created_at|time:"H:i" }})</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Danh sách các bài viết còn lại (grid) -->
+    <div class="article-ctn">
+        <div class="article-grid">
+            {% for article in articles %}
+                {% if article.id != featured_article.id %}
+                <div class="article-card" data-category="{{ article.categories_name|lower }}" onclick="window.location.href='{% url 'public_article_detail' article.id %}'">
+                    <h3>{{ article.title }}</h3>  <!-- TIÊU ĐỀ MỖI BÀI -->
+                    <div class="article-image">
+                        {% if article.image %}
+                            <img src="{{ article.image.url }}" alt="{{ article.title }}" />
+                        {% else %}
+                            <img src="{% static 'cms_api/img/it-certificate.jpg' %}" alt="{{ article.title }}" />
+                        {% endif %}
+                    </div>
+                    <div class="article-info">
+<<<<<<< HEAD
+                        <p class="article-summary">{{ article.content|truncatewords:20 }}</p>
+=======
+                        <p class="article-summary">{{ article.content|truncatewords:20|safe }}</p> <!-- Thêm |safe để giữ định dạng HTML -->
+>>>>>>> 8450a53 (Tuan)
+                        <span class="author">Author: {{ article.author.username }}</span>
+                        <span class="date">{{ article.created_at|date:"d-M-Y" }} ({{ article.created_at|time:"H:i" }})</span>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+{% else %}
+    <div class="empty-message no-articles">
+        <p>No matching articles found in {{ category_name }}.</p>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.article-card h3 {
+<<<<<<< HEAD
+    font-size 20px;
+=======
+    font-size: 20px;
+>>>>>>> 8450a53 (Tuan)
+    margin-bottom: 15px;
+    color: #153060;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<<<<<<< HEAD
+{% endblock %}
+=======
+{% endblock %}
+>>>>>>> 8450a53 (Tuan)

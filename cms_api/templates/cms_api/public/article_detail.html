@@ -1,0 +1,87 @@
+{% extends 'cms_api/public/base.html' %}
+{% load static %}
+
+{% block title %}{{ article.title }} | FLIC - DUE{% endblock %}
+
+{% block content %}
+<div class="article-detail-page">
+    <div class="back-link">
+        <a href="{% url 'public_home' %}"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+
+    <article class="article-full">
+        <h1 class="article-title">{{ article.title }}</h1>
+
+        <div class="article-category">Category: {{ article.categories_name }}</div>
+
+        <div class="article-content">
+            {% if article.content %}
+<<<<<<< HEAD
+                {{ article.content|linebreaks }}
+=======
+                {{ article.content|safe }} <!-- Dùng |safe để render HTML -->
+>>>>>>> 8450a53 (Tuan)
+            {% endif %}
+
+            {% if article.image %}
+            <div class="article-image">
+                <img src="{{ article.image.url }}" alt="{{ article.title }}" />
+            </div>
+            {% endif %}
+
+            {% if article.tag %}
+            <div class="article-tags">
+                <span>Tags:</span>
+                {% for tag in article.tag.split %}
+                    <a href="#" class="tag">{{ tag }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="article-meta">
+                <div class="author">Author: {{ article.author.username }}</div>
+                <div class="date">{{ article.created_at|date:"d-M-Y" }} ({{ article.created_at|time:"H:i" }})</div>
+            </div>
+        </div>
+    </article>
+
+    {% if related_articles %}
+    <section class="related-articles">
+        <h2>OTHER ARTICLES</h2>
+
+        <div class="related-article-list">
+            {% for related in related_articles %}
+            <div class="related-article article-card" data-category="{{ related.categories_name|lower }}" onclick="window.location.href='{% url 'public_article_detail' related.id %}'">
+                <div class="related-article-image">
+                    {% if related.image %}
+                        <img src="{{ related.image.url }}" alt="{{ related.title }}" />
+                    {% else %}
+                        <div style="height: 100%; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0;">
+                            <i class="fas fa-image" style="font-size: 24px; color: #ccc;"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="related-article-content">
+                    <h3>{{ related.title }}</h3>
+<<<<<<< HEAD
+                    <p class="article-summary">{{ related.content|truncatewords:20 }}</p>
+=======
+                    <p class="article-summary">{{ related.content|truncatewords:20|safe }}</p>
+>>>>>>> 8450a53 (Tuan)
+                    <div class="article-meta">
+                        <div class="author">Author: {{ related.author.username }}</div>
+                        <div class="date">{{ related.created_at|date:"d-M-Y" }} ({{ related.created_at|time:"H:i" }})</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+<<<<<<< HEAD
+{% endblock %}
+
+=======
+{% endblock %}
+>>>>>>> 8450a53 (Tuan)
