@@ -3,7 +3,7 @@
 
 ## Mô Tả Dự Án
 
-Dự án **Web App Quản Lý Nội Dung CMS (Content Management System)** dành cho Trung Tâm Ngoại Ngữ cung cấp một hệ thống quản lý nội dung đơn giản nhưng mạnh mẽ, cho phép các quản trị viên dễ dàng quản lý các bài viết, nhật ký hoạt động, nhật ký tìm kiếm, tài khoản người dùng và thay đổi giao diện template của trang web.
+Dự án **Web App Quản Lý Nội Dung CMS (Content Management System)** dành cho Trung Tâm Ngoại Ngữ cung cấp một hệ thống quản lý nội dung đơn giản nhưng mạnh mẽ, cho phép các quản trị viên dễ dàng quản lý các bài viết, nhật ký hoạt động, tài khoản người dùng.
 
 Ứng dụng giúp trung tâm quản lý các thông tin về khóa học, sự kiện, thông báo, và các hoạt động khác. Hệ thống được thiết kế dễ sử dụng, thân thiện với người dùng, và có khả năng mở rộng.
 
