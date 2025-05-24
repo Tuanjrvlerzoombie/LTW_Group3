@@ -16,12 +16,12 @@
 
         <div class="article-content">
             {% if article.content %}
-                {{ article.content|safe }} <!-- Dùng |safe để render HTML -->
+                {{ article.content|safe }}
             {% endif %}
 
             {% if article.image %}
             <div class="article-image">
-                <img src="{{ article.image.url }}" alt="{{ article.title }}" />
+                <img id="mainArticleImage" src="{{ article.image.url }}" alt="{{ article.title }}" />
             </div>
             {% endif %}
 
@@ -62,7 +62,7 @@
                     <p class="article-summary">{{ related.content|truncatewords:20|safe }}</p>
                     <div class="article-meta">
                         <div class="author">Author: {{ related.author.username }}</div>
-                        <div class="date">{{ related.created_at|date:"d-M-Y" }} ({{ related.created_at|time:"H:i" }})</div>
+                        <div class="date">{{ related.created_at|date:"d-M-Y" }} ({{ article.created_at|time:"H:i" }})</div>
                     </div>
                 </div>
             </div>
@@ -71,4 +71,202 @@
     </section>
     {% endif %}
 </div>
+
+<!-- Modal for full image -->
+<div id="imageModal" class="modal">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="modalImage" alt="Full image" />
+  <div id="caption"></div>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Main article image styling */
+
+.article-image {
+    width: 100%;
+    margin: 30px 0;
+    overflow: hidden;
+    text-align: center;
+    position: relative;
+    cursor: pointer; /* show clickable cursor */
+}
+
+.article-image img {
+    max-width: 100%;
+    display: block;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.85);
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  max-width: 90%;
+  max-height: 80vh;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(255,255,255,0.4);
+  animation-name: zoom;
+  animation-duration: 0.3s;
+}
+
+@keyframes zoom {
+  from {transform: scale(0.7)}
+  to {transform: scale(1)}
+}
+
+/* Caption */
+#caption {
+  margin: 15px auto 0;
+  text-align: center;
+  color: #ccc;
+  font-size: 14px;
+}
+
+/* Close button */
+.close {
+  position: absolute;
+  top: 30px;
+  right: 45px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.3s ease;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Related articles styling */
+.related-article-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.related-article.article-card {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+    cursor: pointer;
+
+    transition: box-shadow 0.3s ease;
+}
+
+.related-article-image {
+    width: 300px;
+    height: auto;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.related-article-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.related-article-image img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.related-article-content h3 {
+    font-weight: bold;
+    font-size: 18px;
+    margin: 10px 0;
+    color: #1d3557;
+    min-height: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.article-summary {
+    font-size: 14px;
+    color: #333;
+    margin: 0 0 10px 0;
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.article-title {
+    margin-bottom: 20px;
+}
+
+.article-meta {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Get modal elements
+const modal = document.getElementById("imageModal");
+const modalImg = document.getElementById("modalImage");
+const captionText = document.getElementById("caption");
+const closeBtn = document.getElementsByClassName("close")[0];
+
+// Image in article to open modal
+const mainImage = document.getElementById("mainArticleImage");
+
+if(mainImage){
+    mainImage.onclick = function(){
+        modal.style.display = "block";
+        modalImg.src = this.src;
+        captionText.innerHTML = this.alt;
+    };
+}
+
+// Close modal on close button click
+closeBtn.onclick = function() {
+  modal.style.display = "none";
+}
+
+// Also close modal if clicking outside the modal image
+modal.onclick = function(event){
+  if(event.target === modal){
+    modal.style.display = "none";
+  }
+}
+</script>
 {% endblock %}

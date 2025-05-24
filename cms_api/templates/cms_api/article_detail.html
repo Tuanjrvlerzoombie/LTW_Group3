@@ -24,26 +24,12 @@
     .article-header {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         padding: 15px 20px;
         background-color: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         margin-bottom: 20px;
-    }
-
-    .article-title-section {
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        margin-bottom: 20px;
-        padding: 20px;
-    }
-
-    .article-title-text {
-        font-size: 24px;
-        font-weight: 600;
-        color: #2c3e50;
-        margin: 0;
     }
 
     .back-button {
@@ -56,10 +42,21 @@
         text-decoration: none;
     }
 
+    .article-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+        flex: 1;
+        padding: 0 20px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     .header-actions {
         display: flex;
         gap: 10px;
-        margin-left: auto;
     }
 
     .content-section {
@@ -253,7 +250,7 @@
     }
 
     .btn-download {
-        background-color: #2c3e50;
+        background-color: #3498db;
         color: white;
     }
 
@@ -263,20 +260,14 @@
     }
 
     .btn-delete {
-        background-color: #e74c3c;
+        background-color: #f38012;
         color: white;
     }
-
-    .btn-publish {
-        background-color: #2ecc71;
-        color: white;
-    }
-
-    .btn-reject {
-        background-color: #e74c3c;
-        color: white;
-    }
-
+.btn-primary {
+  background-color: #2c3e50;
+  color: white;
+  height: 33.6px;
+}
     @media (max-width: 992px) {
         .article-detail-container {
             flex-direction: column;
@@ -286,73 +277,17 @@
             width: 100%;
         }
     }
-
-    /* CKEditor Styles */
-    .cke_chrome {
-        border: 1px solid #ddd !important;
-        border-radius: 4px !important;
-        box-shadow: none !important;
-    }
-
-    .cke_top {
-        border-bottom: 1px solid #ddd !important;
-        background: #f8f9fa !important;
-    }
-
-    .cke_bottom {
-        border-top: 1px solid #ddd !important;
-        background: #f8f9fa !important;
-    }
-
-    /* Hiển thị nội dung HTML */
-    .article-content {
-        line-height: 1.6;
-    }
-
-    .article-content img {
-        max-width: 100%;
-        height: auto;
-    }
-
-    .article-content table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 15px 0;
-    }
-
-    .article-content table td,
-    .article-content table th {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-
-    .article-content blockquote {
-        border-left: 4px solid #ddd;
-        padding-left: 15px;
-        margin-left: 0;
-        color: #666;
-    }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Navigation Header -->
+<!-- Article Header -->
 <div class="article-header">
     <a href="{% url 'home' %}" class="back-button">
         <i class="fas fa-arrow-left"></i>
         <span>Back</span>
     </a>
     <div class="header-actions">
-        {% if post.status == 'pending' and request.user.role == 'editor' %}
-        <form method="post" action="{% url 'publish_article' post.id %}" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-publish">Publish</button>
-        </form>
-        <form method="post" action="{% url 'reject_article' post.id %}" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-reject">Reject</button>
-        </form>
-        {% endif %}
         <button class="btn btn-edit" id="editArticleBtn">Edit</button>
         <form method="post" action="{% url 'delete_article' post.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this article?');">
             {% csrf_token %}
@@ -364,11 +299,6 @@
             <i class="fas fa-download"></i> Download PDF
         </button>
     </div>
-</div>
-
-<!-- Article Title Section -->
-<div class="article-title-section">
-    <h1 class="article-title-text">{{ post.title }}</h1>
 </div>
 
 <div class="article-detail-container">
@@ -387,7 +317,7 @@
             <div class="content-section">
                 <div class="section-header">Content</div>
                 <div class="section-content">
-                    <textarea name="content" id="editor" rows="10" class="form-control">{{ post.content }}</textarea>
+                    <textarea name="content" rows="10" class="form-control">{{ post.content }}</textarea>
                 </div>
             </div>
 
@@ -395,33 +325,10 @@
                 <div class="section-header">Category</div>
                 <div class="section-content">
                     <select name="categories_name" class="form-control">
-                        <option value="event" {% if post.categories_name == 'event' %}selected{% endif %}>Event</option>
-                        <option value="knowledge" {% if post.categories_name == 'knowledge' %}selected{% endif %}>Knowledge</option>
-                        <option value="course" {% if post.categories_name == 'course' %}selected{% endif %}>Course</option>
-                        <option value="news" {% if post.categories_name == 'news' %}selected{% endif %}>News</option>
-                        <option value="vocabulary" {% if post.categories_name == 'vocabulary' %}selected{% endif %}>Vocabulary</option>
-                        <option value="grammar" {% if post.categories_name == 'grammar' %}selected{% endif %}>Grammar</option>
-                        <option value="listening" {% if post.categories_name == 'listening' %}selected{% endif %}>Listening</option>
-                        <option value="speaking" {% if post.categories_name == 'speaking' %}selected{% endif %}>Speaking</option>
-                        <option value="reading" {% if post.categories_name == 'reading' %}selected{% endif %}>Reading</option>
-                        <option value="writing" {% if post.categories_name == 'writing' %}selected{% endif %}>Writing</option>
-                        <option value="exams" {% if post.categories_name == 'exams' %}selected{% endif %}>English Exams</option>
-                        <option value="conversational" {% if post.categories_name == 'conversational' %}selected{% endif %}>Conversational English</option>
-                        <option value="business" {% if post.categories_name == 'business' %}selected{% endif %}>Business English</option>
-                        <option value="culture" {% if post.categories_name == 'culture' %}selected{% endif %}>English Culture</option>
-                        <option value="resources" {% if post.categories_name == 'resources' %}selected{% endif %}>Free Resources</option>
-                        <option value="community" {% if post.categories_name == 'community' %}selected{% endif %}>Community</option>
-                        <option value="ielts" {% if post.categories_name == 'ielts' %}selected{% endif %}>IELTS</option>
-                        <option value="toeic" {% if post.categories_name == 'toeic' %}selected{% endif %}>TOEIC</option>
-                        <option value="toefl" {% if post.categories_name == 'toefl' %}selected{% endif %}>TOEFL</option>
-                        <option value="cambridge" {% if post.categories_name == 'cambridge' %}selected{% endif %}>Cambridge</option>
-                        <option value="pronunciation" {% if post.categories_name == 'pronunciation' %}selected{% endif %}>Pronunciation</option>
-                        <option value="idioms" {% if post.categories_name == 'idioms' %}selected{% endif %}>Idioms</option>
-                        <option value="phrasal_verbs" {% if post.categories_name == 'phrasal_verbs' %}selected{% endif %}>Phrasal Verbs</option>
-                        <option value="podcasts" {% if post.categories_name == 'podcasts' %}selected{% endif %}>Podcasts</option>
-                        <option value="videos" {% if post.categories_name == 'videos' %}selected{% endif %}>Videos</option>
-                        <option value="apps" {% if post.categories_name == 'apps' %}selected{% endif %}>Apps</option>
-                        <option value="books" {% if post.categories_name == 'books' %}selected{% endif %}>Books</option>
+                        <option value="Event" {% if post.categories_name == 'Event' %}selected{% endif %}>Event</option>
+                        <option value="Knowledge" {% if post.categories_name == 'Knowledge' %}selected{% endif %}>Knowledge</option>
+                        <option value="Course" {% if post.categories_name == 'Course' %}selected{% endif %}>Course</option>
+                        <option value="News" {% if post.categories_name == 'News' %}selected{% endif %}>News</option>
                     </select>
                 </div>
             </div>
@@ -476,6 +383,9 @@
 
         <!-- Article Display -->
         <div id="articleDisplay">
+            <div class="content-section">
+                <h1 class="article-title">{{ post.title }}</h1>
+            </div>
             <!-- Content Section -->
             <div class="content-section">
                 <div class="section-header">Content</div>
@@ -625,13 +535,27 @@
                 {% endif %}
             </div>
         </div>
+
+
+        {% if post.status == 'pending' and request.user.role == 'editor' %}
+        <div style="margin-top: 20px;">
+            <form method="post" action="{% url 'publish_article' post.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px; background-color:#2ecc71">Publish</button>
+            </form>
+            <form method="post" action="{% url 'reject_article' post.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" style="width: 100%;">Reject</button>
+            </form>
+        </div>
+        {% endif %}
+
     </div>
 </div>
 
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.ckeditor.com/4.25.1/standard-all/ckeditor.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const editBtn = document.getElementById('editArticleBtn');
@@ -639,24 +563,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const editForm = document.getElementById('editArticleForm');
     const articleDisplay = document.getElementById('articleDisplay');
     const downloadPdfBtn = document.getElementById('downloadPdfBtn');
-
-    // Khởi tạo CKEditor
-    if (document.getElementById('editor')) {
-        CKEDITOR.replace('editor', {
-            height: 400,
-            removePlugins: 'elementspath',
-            resize_enabled: false,
-            toolbar: [
-                { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat' ] },
-                { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote' ] },
-                { name: 'links', items: [ 'Link', 'Unlink' ] },
-                { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule', 'SpecialChar' ] },
-                { name: 'styles', items: [ 'Format' ] },
-                { name: 'tools', items: [ 'Maximize' ] },
-                { name: 'document', items: [ 'Source' ] }
-            ]
-        });
-    }
 
     if (editBtn) {
         editBtn.addEventListener('click', function() {

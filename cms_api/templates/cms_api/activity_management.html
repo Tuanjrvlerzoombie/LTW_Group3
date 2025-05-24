@@ -31,7 +31,6 @@
                 <th>User name</th>
                 <th>Role</th>
                 <th>Action</th>
-                <th>Status</th>
                 <th>Time</th>
             </tr>
         </thead>
@@ -53,7 +52,7 @@
                 <td>
                     <div>{{ activity.get_action_display }}</div>
                     <div class="small-text">
-                        {% if activity.action == 'publish' %}
+                         {% if activity.action == 'publish' %}
                             Published:
                         {% elif activity.action == 'modify' %}
                             Modified:
@@ -61,17 +60,12 @@
                             Deleted:
                         {% endif %}
                         {% if activity.post %}
-                            {{ activity.post.title|truncatechars:50 }}
+                            {{ activity.post.id }}
                         {% else %}
                             {{ activity.details|truncatechars:50 }}
                         {% endif %}
-                    </div>
-                </td>
-                <td>
-                    <span class="status {% if activity.user.is_online %}online{% else %}offline{% endif %}">
-                        <i class="fas fa-circle"></i>
-                        {% if activity.user.is_online %}Online{% else %}Offline{% endif %}
-                    </span>
+                </div>
+
                 </td>
                 <td>{{ activity.timestamp|date:"d-M-Y" }} | {{ activity.timestamp|time:"h:i a" }}</td>
             </tr>

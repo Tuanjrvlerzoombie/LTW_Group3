@@ -74,92 +74,73 @@
             <button class="close-btn" id="closeNewModalBtn"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <div class="tabs">
-                <div class="tab active" data-tab="basic-info">Basic Info</div>
-                <div class="tab" data-tab="professional-info">Professional Info</div>
-            </div>
-
             <form id="newUserForm" method="post" action="{% url 'account_add' %}" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <div class="tab-content" id="basic-info-content">
-                    <div class="photo-upload">
-                        <div class="photo-placeholder">
-                            <div class="avatar-preview"></div>
-                        </div>
-                        <div class="upload-info">
-                            <h3>Upload New Photo</h3>
-                            <p>JPG, PNG or JPEG is allowed</p>
-                            <label for="avatar" class="browse-btn">
-                                <i class="fas fa-upload"></i> Browse
-                            </label>
-                            <input type="file" id="avatar" name="avatar" accept="image/*" style="display: none;">
-                        </div>
+                <div class="photo-upload">
+                    <div class="photo-placeholder">
+                        <div class="avatar-preview"></div>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group half">
-                            <label for="first_name">First Name <span class="required">*</span></label>
-                            <input type="text" id="first_name" name="first_name" class="form-control" placeholder="First Name" required>
-                        </div>
-                        <div class="form-group half">
-                            <label for="last_name">Last Name <span class="required">*</span></label>
-                            <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Last Name" required>
-                        </div>
+                    <div class="upload-info">
+                        <h3>Upload New Photo</h3>
+                        <p>JPG, PNG or JPEG is allowed</p>
+                        <label for="avatar" class="browse-btn">
+                            <i class="fas fa-upload"></i> Browse
+                        </label>
+                        <input type="file" id="avatar" name="avatar" accept="image/*" style="display: none;">
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group half">
-                            <label for="phone_number">WhatsApp No. <span class="required">*</span></label>
-                            <input type="text" id="phone_number" name="phone_number" class="form-control" placeholder="WhatsApp Number" required>
-                        </div>
-                        <div class="form-group half">
-                            <label for="password">Password <span class="required">*</span></label>
-                            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-                        </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="username">Username <span class="required">*</span></label>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="Username" required>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group half">
-                            <label for="location">Location</label>
-                            <input type="text" id="location" name="location" class="form-control" placeholder="Location">
-                        </div>
-                        <div class="form-group half">
-                            <label for="email">Email Address <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" class="form-control" placeholder="Email Address" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="profile_summary">Profile Summary <span class="required">*</span></label>
-                        <textarea id="profile_summary" name="profile_summary" class="form-control" rows="4" placeholder="Write a brief summary about the user" required></textarea>
+                    <div class="form-group half">
+                        <label for="role">Role <span class="required">*</span></label>
+                        <select id="role" name="role" class="form-control" required>
+                            <option value="admin">Admin</option>
+                            <option value="editor">Editor</option>
+                            <option value="author">Author</option>
+                            <option value="viewer">Viewer</option>
+                            <option value="user">User</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="tab-content" id="professional-info-content" style="display: none;">
-                    <div class="form-row">
-                        <div class="form-group half">
-                            <label for="username">Username <span class="required">*</span></label>
-                            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required>
-                        </div>
-                        <div class="form-group half">
-                            <label for="role">Role <span class="required">*</span></label>
-                            <select id="role" name="role" class="form-control" required>
-                                <option value="admin">Admin</option>
-                                <option value="editor">Editor</option>
-                                <option value="author">Author</option>
-                                <option value="viewer">Viewer</option>
-                                <option value="user">User</option>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="is_active">Status</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="is_active" name="is_active" checked>
-                            <label for="is_active">Active</label>
-                        </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="phone_number">Phone Number <span class="required">*</span></label>
+                        <input type="text" id="phone_number" name="phone_number" class="form-control" placeholder="WhatsApp Number" required>
+                    </div>
+                    <div class="form-group half">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" class="form-control" placeholder="Location">
+                    </div>
+                    <div class="form-group half">
+                        <label for="email">Email<span class="required">*</span></label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Email Address" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="profile_summary">Profile Summary  <span class="required">*</span></label>
+                    <textarea id="profile_summary" name="profile_summary" class="form-control" rows="4" placeholder="Write a brief summary about the user" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="is_active">Status</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="is_active" name="is_active" checked>
+                        <label for="is_active">Active</label>
                     </div>
                 </div>
 
@@ -172,6 +153,7 @@
     </div>
 </div>
 
+
 <!-- Edit User Modal -->
 <div id="editUserModal" class="modal">
     <div class="modal-content user-modal">
@@ -182,7 +164,6 @@
         <div class="modal-body">
             <div class="tabs">
                 <div class="tab active" data-tab="edit-basic-info">Basic Info</div>
-                <div class="tab" data-tab="edit-professional-info">Professional Info</div>
             </div>
 
             <form id="editUserForm" method="post" action="" enctype="multipart/form-data">
@@ -216,7 +197,7 @@
 
                     <div class="form-row">
                         <div class="form-group half">
-                            <label for="edit_phone_number">WhatsApp No. <span class="required">*</span></label>
+                            <label for="edit_phone_number">Phone Number <span class="required">*</span></label>
                             <input type="text" id="edit_phone_number" name="phone_number" class="form-control" placeholder="WhatsApp Number" required>
                         </div>
                         <div class="form-group half">

@@ -36,9 +36,8 @@ body {
 }
 
 .logo-square {
-  width: 20px;
-  height: 20px;
-  background-color: white;
+  width: 30px;
+  height: 30px;
   margin-right: 10px;
 }
 
@@ -97,9 +96,10 @@ body {
 }
 
 .user-name {
+  color: black;
   font-size: 10px;
   text-align: center;
-  color: black;
+
 }
 .logout-btn {
   color: white;
@@ -775,6 +775,8 @@ textarea.form-control {
 .form-group {
   margin-bottom: 15px;
   flex: 1;
+  display: flex;
+  gap: 10px;
 }
 
 .form-group.half {
@@ -871,9 +873,7 @@ textarea.form-control {
     display: none;
   }
 
-  .user-name {
-    display: none;
-  }
+
 
   .main-content {
     margin-left: 70px;
